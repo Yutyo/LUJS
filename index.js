@@ -2,9 +2,16 @@
 
 // Run the LU server...
 const fs = require('fs');
-const config = JSON.parse(fs.readFileSync('config.json'));
-const Loader = require('./Loader');
+const fse = require('fs-extra');
 
+if(!fs.existsSync('config.json')) {
+    console.info('Copying config.example.json to config.json...');
+    fse.copySync('config.example.json', 'config.json');
+}
+const config = JSON.parse(fs.readFileSync('config.json'));
+
+
+const Loader = require('./Loader');
 Loader.setup(config);
 
 

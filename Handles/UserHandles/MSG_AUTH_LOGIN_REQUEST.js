@@ -80,8 +80,7 @@ function MSG_AUTH_LOGIN_REQUEST(handler) {
                         end_time: new Date(today.getTime() + (24 * 60 * 60 * 1000)),
                         ip: user.address,
                         user_id: userModel.id
-                    })
-
+                    });
 
                 } else {
                     response.code = LoginCodes.badPassword;

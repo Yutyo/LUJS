@@ -12,9 +12,6 @@ const UserSessionInfo = require('../../LU/Messages/UserSessionInfo');
 const {DiconnectNotify, DisconnectNotifyReason} = require('../../LU/Messages/DisconnectNotify');
 const Sequelize = require('sequelize');
 
-/**
- * TODO: This function is still a WIP. I need to refine the query to get an actual result. Ignore the error for now...
- */
 function MSG_WORLD_CLIENT_VALIDATION(handler) {
     handler.on([LURemoteConnectionType.server, LUServerMessageType.MSG_WORLD_CLIENT_VALIDATION].join(), function(server, packet, user) {
         let client = server.getClient(user.address);

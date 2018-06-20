@@ -7,6 +7,10 @@ class Server {
     constructor(rakserver, zoneID) {
         this._rakserver = rakserver;
         this._zoneID = zoneID;
+        let server = this;
+        this._rakserver.getServer = function() {
+            return server;
+        }
     }
 
     get rakServer() {

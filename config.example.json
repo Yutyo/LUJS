@@ -1,24 +1,35 @@
 {
   "servers": [
     {
-      "ip":"127.0.0.1",
-      "port":1001,
-      "password":"3.25 ND",
+      "ip": "127.0.0.1",
+      "port": 1001,
+      "password": "3.25 ND",
       "zone": -1
     },
     {
-      "ip":"127.0.0.1",
-      "port":2002,
-      "password":"3.25 ND",
+      "ip": "127.0.0.1",
+      "port": 2001,
+      "password": "3.25 ND",
       "zone": 0
+    },
+    {
+      "ip": "127.0.0.1",
+      "port": 2002,
+      "password": "3.25 ND",
+      "zone": 1000
     }
   ],
   "database": {
     "type": "sqlite",
-    "connection": "./lujs.sqlite"
+    "connection": "./lujs.sqlite",
+    "rebuild": false,
+    "models": "./DB/Models/"
   },
   "cdclient": {
     "type": "sqlite",
-    "connection": "./cdclient.sqlite"
-  }
+    "connection": "./cdclient.sqlite",
+    "models": "./DB/CDClient/"
+  },
+  "handlers": "./Handles/MessageHandles/",
+  "logLevel": 5
 }

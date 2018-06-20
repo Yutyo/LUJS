@@ -1,6 +1,6 @@
 {
   "name": "lujs",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "A simple LEGO Universe server written in Node",
   "main": "index.js",
   "scripts": {
@@ -18,5 +18,8 @@
     "sqlite3": "^4.0.0"
   },
   "author": "Raine Bannister",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "fs-extra": "^6.0.1"
+  }
 }

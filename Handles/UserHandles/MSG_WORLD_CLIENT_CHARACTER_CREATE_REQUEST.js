@@ -38,8 +38,10 @@ function MSG_WORLD_CLIENT_CHARACTER_CREATE_REQUEST(handler) {
 
             const Op = Sequelize.Op;
 
+            let promises = [];
+
             // Find the shirt...
-            ItemComponent.findOne({
+            promises.push(ItemComponent.findOne({
                 where: {
                     [Op.and]: [
                         {color1: minifig.shirtColor},
@@ -48,7 +50,7 @@ function MSG_WORLD_CLIENT_CHARACTER_CREATE_REQUEST(handler) {
                     ]
                 }
             }).then(function(inventoryComponent) {
-                ComponentsRegistry.findOne({
+                promises.push(ComponentsRegistry.findOne({
                     where: {
                         [Op.and]: [
                             {component_type: 11},
@@ -65,52 +67,55 @@ function MSG_WORLD_CLIENT_CHARACTER_CREATE_REQUEST(handler) {
                         is_equipped: 1,
                         is_linked: 1
                     });
+                }));
+            }));
 
-                    // Find pants...
-                    ItemComponent.findOne({
-                        where: {
-                            [Op.and]: [
-                                {color1: minifig.pantsColor},
-                                {equipLocation: "legs"}
-                            ]
-                        }
-                    }).then(function(inventoryComponent) {
-                        ComponentsRegistry.findOne({
-                            where: {
-                                [Op.and]: [
-                                    {component_type: 11},
-                                    {component_id: inventoryComponent.id}
-                                ]
-                            }
-                        }).then(function(component) {
-                            InventoryItem.create({
-                                character_id: character.id,
-                                lot: component.id,
-                                slot: 1,
-                                count: 1,
-                                type: 0,
-                                is_equipped: 1,
-                                is_linked: 1
-                            }).then(function() {
-                                // Send the minifig list again
-                                handler.emit([LURemoteConnectionType.server, LUServerMessageType.MSG_WORLD_CLIENT_CHARACTER_LIST_REQUEST].join(), server, undefined, user);
-                            });
-                        });
+            // Find pants...
+            promises.push(ItemComponent.findOne({
+                where: {
+                    [Op.and]: [
+                        {color1: minifig.pantsColor},
+                        {equipLocation: "legs"}
+                    ]
+                }
+            }).then(function(inventoryComponent) {
+                promises.push(ComponentsRegistry.findOne({
+                    where: {
+                        [Op.and]: [
+                            {component_type: 11},
+                            {component_id: inventoryComponent.id}
+                        ]
+                    }
+                }).then(function(component) {
+                    InventoryItem.create({
+                        character_id: character.id,
+                        lot: component.id,
+                        slot: 1,
+                        count: 1,
+                        type: 0,
+                        is_equipped: 1,
+                        is_linked: 1
                     });
-                });
+                }));
+            }));
+
+            Promise.all(promises).then(function() {
+                let response = new MinifigCreateResponse();
+                response.id = CreationResponse.SUCCESS;
+
+                let send = new BitStream();
+                send.writeByte(RakMessages.ID_USER_PACKET_ENUM);
+                send.writeShort(LURemoteConnectionType.client);
+                send.writeLong(LUClientMessageType.CHARACTER_CREATE_RESPONSE);
+                send.writeByte(0);
+                response.serialize(send);
+                client.send(send, Reliability.RELIABLE_ORDERED);
+
+                // Send the minifig list again
+                handler.emit([LURemoteConnectionType.server, LUServerMessageType.MSG_WORLD_CLIENT_CHARACTER_LIST_REQUEST].join(), server, undefined, user);
             });
 
 
-            let response = new MinifigCreateResponse();
-            response.id = CreationResponse.SUCCESS;
-
-            let send = new BitStream();
-            send.writeByte(RakMessages.ID_USER_PACKET_ENUM);
-            send.writeShort(LURemoteConnectionType.client);
-            send.writeLong(LUClientMessageType.CHARACTER_CREATE_RESPONSE);
-            send.writeByte(0);
-            response.serialize(send);
-            client.send(send, Reliability.RELIABLE_ORDERED);
         });
     });
 }
