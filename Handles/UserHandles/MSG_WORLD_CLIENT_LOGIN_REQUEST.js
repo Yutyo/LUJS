@@ -5,24 +5,37 @@ const LURemoteConnectionType = require('../../LU/Message Types/LURemoteConnectio
 const LUServerMessageType = require('../../LU/Message Types/LUServerMessageType');
 const LUClientMessageType = require('../../LU/Message Types/LUClientMessageType');
 const TransferToWorld = require('../../LU/Messages/TransferToWorld');
+const LWOOBJID = require('../../LU/LWOOBJID');
 
 function MSG_WORLD_CLIENT_LOGIN_REQUEST(handler) {
     handler.on([LURemoteConnectionType.server, LUServerMessageType.MSG_WORLD_CLIENT_LOGIN_REQUEST].join(), function(server, packet, user) {
         let client = server.getClient(user.address);
 
-        let characterID = packet.readLongLong();
+        let characterID = new LWOOBJID();
+        characterID.deserialize(packet);
+
+        client.session.character_id = characterID.low;
+        client.session.save();
 
         Character.findOne({
             where: {
-                id: characterID
+                id: characterID.low
             }
         }).then(function(character) {
             if(character.zone === 0) {
                 character.zone = 1000;
-                character.save();
             }
 
             let zone = servers.findZone(character.zone)[0];
+
+            character.x = zone.luz.spawnX;
+            character.y = zone.luz.spawnY;
+            character.z = zone.luz.spawnZ;
+            character.rotation_x = zone.luz.spawnrX;
+            character.rotation_y = zone.luz.spawnrY;
+            character.rotation_z = zone.luz.spawnrZ;
+            character.rotation_w = zone.luz.spawnrW;
+            character.save();
 
             let response = new TransferToWorld();
             response.ip = zone.rakServer.ip;

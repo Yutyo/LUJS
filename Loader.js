@@ -7,11 +7,13 @@ const path = require('path');
 class Loader {
     static setup(config) {
         global.logLevel = config.logLevel;
+        global.maps = config.mapsFolder;
 
-        this.startServersFromConfig(config);
-        this.addMessageHandles(config);
         this.setupDatabase(config);
         this.setupCDClient(config);
+        this.startServersFromConfig(config);
+        this.addMessageHandles(config);
+
     }
 
     static startServersFromConfig(config) {

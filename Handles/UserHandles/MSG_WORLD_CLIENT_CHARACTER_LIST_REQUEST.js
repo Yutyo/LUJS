@@ -10,6 +10,7 @@ const BitStream = require('node-raknet/BitStream');
 const {ReliabilityLayer, Reliability} = require('node-raknet/ReliabilityLayer.js');
 const MinifigList = require('../../LU/Messages/MinifigList');
 const Sequelize = require('sequelize');
+const LWOOBJID = require('../../LU/LWOOBJID');
 
 function MSG_WORLD_CLIENT_CHARACTER_LIST_REQUEST(handler) {
     handler.on([LURemoteConnectionType.server, LUServerMessageType.MSG_WORLD_CLIENT_CHARACTER_LIST_REQUEST].join(), function(server, packet, user) {
@@ -27,8 +28,9 @@ function MSG_WORLD_CLIENT_CHARACTER_LIST_REQUEST(handler) {
                 let promises = [];
                 let response = new MinifigList();
                 characters.forEach(function(character) {
+                    let id = new LWOOBJID(0x1de0b6b5, character.id);
                     char = {
-                        id: character.id,
+                        id: id,
                         unknown1: 0,
                         name: character.name,
                         unapprovedName: character.unapproved_name,

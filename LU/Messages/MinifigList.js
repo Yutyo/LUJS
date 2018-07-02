@@ -52,7 +52,7 @@ class MinifigList extends Message {
         stream.writeByte(0); // TODO: This needs to be the index of the last used character
         for(let i = 0; i < this.characters.length; i ++) {
             let character = this.characters[i];
-            stream.writeLongLong(character.id);
+            character.id.serialize(stream);
             stream.writeLong(character.unknown1);
             stream.writeWString(character.name);
             stream.writeWString(character.unapprovedName);

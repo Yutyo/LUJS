@@ -56,7 +56,7 @@ class LoadStaticZone extends Message {
     deserialize(stream) {
         this.zoneID = stream.readShort();
         this.cloneID = stream.readShort();
-        this.instanceID = stream.readShort();
+        this.instanceID = stream.readLong();
         this.checksum = stream.readLong();
         this.unknown1 = stream.readShort();
         this.x = stream.readFloat();
@@ -67,8 +67,8 @@ class LoadStaticZone extends Message {
 
     serialize(stream) {
         stream.writeShort(this.zoneID);
-        stream.writeShort(this.cloneID);
         stream.writeShort(this.instanceID);
+        stream.writeLong(this.instanceID);
         stream.writeLong(Checksum[this.zoneID]);
         stream.writeShort(this.unknown1);
         stream.writeFloat(this.x);

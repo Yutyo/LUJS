@@ -26,6 +26,11 @@ const Session = sequelize.define('session', {
     user_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
+    },
+    character_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0
     }
 });
 

@@ -9,7 +9,7 @@ const LUGeneralMessageType = require('../../LU/Message Types/LUGeneralMessageTyp
 const BitStream = require('node-raknet/BitStream');
 const {ReliabilityLayer, Reliability} = require('node-raknet/ReliabilityLayer.js');
 const UserSessionInfo = require('../../LU/Messages/UserSessionInfo');
-const {DiconnectNotify, DisconnectNotifyReason} = require('../../LU/Messages/DisconnectNotify');
+const {DisconnectNotify, DisconnectNotifyReason} = require('../../LU/Messages/DisconnectNotify');
 const Sequelize = require('sequelize');
 
 function MSG_WORLD_CLIENT_VALIDATION(handler) {
@@ -38,7 +38,7 @@ function MSG_WORLD_CLIENT_VALIDATION(handler) {
                 }).then(session => {
                     if(session === null) {
                         // We didn't find a valid session for this user... Time to disconnect them...
-                        let response = new DiconnectNotify(); // TODO: Investigate error...
+                        let response = new DisconnectNotify(); // TODO: Investigate error...
                         response.reason = DisconnectNotifyReason.INVALID_SESSION_KEY;
 
                         let send = new BitStream();
@@ -50,6 +50,7 @@ function MSG_WORLD_CLIENT_VALIDATION(handler) {
                         client.send(send, Reliability.RELIABLE_ORDERED);
                     } else {
                         client.user_id = userDB.id;
+                        client.session = session;
                         handler.emit(`user-authenticated-${user.address}-${user.port}`);
                     }
                 });
