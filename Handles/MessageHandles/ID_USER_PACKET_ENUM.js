@@ -8,7 +8,7 @@ const LURemoteConnectionType = require('../../LU/Message Types/LURemoteConnectio
 const LUGeneralMessageType = require('../../LU/Message Types/LUGeneralMessageType');
 const LUAthenticationMessageType = require('../../LU/Message Types/LUAuthenticationMessageType');
 const LUChatMessageType = require('../../LU/Message Types/LUChatMessageType');
-const LUServerMessageType = require('../../Lu/Message Types/LUServerMessageType');
+const LUServerMessageType = require('../../LU/Message Types/LUServerMessageType');
 const LUClientMessageType = require('../../LU/Message Types/LUClientMessageType');
 const Log = require('../../Log');
 
