@@ -4,7 +4,6 @@
  */
 const RakMessages = require('node-raknet/RakMessages.js');
 const BitStream = require('node-raknet/BitStream.js');
-const EventEmitter = require('events');
 const LURemoteConnectionType = require('../../LU/Message Types/LURemoteConnectionType');
 const LUGeneralMessageType = require('../../LU/Message Types/LUGeneralMessageType');
 const LUAthenticationMessageType = require('../../LU/Message Types/LUAuthenticationMessageType');
@@ -18,7 +17,6 @@ const Log = require('../../Log');
  * @param {RakServer} server
  */
 function ID_USER_PACKET_ENUM(server) {
-    server.userMessageHandler = new EventEmitter();
 
     // Each module is responsible for registering for the event
     let normalizedPath = require("path").join(__dirname, "../UserHandles");

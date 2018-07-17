@@ -10,6 +10,10 @@ class ControllablePhysicsManager extends GenericManager {
 
         server.eventBus.on('new-object-created', object => {
             if(object.components.hasComponent(Components.CONTROLABLE_PHYSICS_COMPONENT)) {
+                // Add data
+
+                
+
                 object.addSerializer(SerializationOrder.indexOf(Components.CONTROLABLE_PHYSICS_COMPONENT), (type, stream) => {
                     // TODO: Add code
                 });

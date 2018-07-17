@@ -1,4 +1,6 @@
 const fs = require('fs');
+const EventEmitter = require('events');
+
 const LUZ = require('./LU/Level/luz');
 const BitStream = require('node-raknet/BitStream');
 const Manager = require('./LU/Managers/Manager');
@@ -15,6 +17,7 @@ class Server {
      */
     constructor(rakserver, zoneID) {
         this._rakserver = rakserver;
+        this._rakserver.userMessageHandler = new EventEmitter();
         this._zoneID = zoneID;
         let server = this;
         this._rakserver.getServer = function() {

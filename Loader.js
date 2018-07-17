@@ -58,6 +58,12 @@ class Loader {
         const Sequelize = require('sequelize');
         global.rebuildDB = config.database.rebuild;
 
+        if(config.database.rebuild) {
+            Log.info('Rebuilding the database');
+            config.database.rebuild = false;
+            fs.writeFile('config.json', JSON.stringify(config, null, 4));
+        }
+
         // Set up connection information
         global.sequelize = new Sequelize('lujs', null, null, {
             dialect: config.database.type,

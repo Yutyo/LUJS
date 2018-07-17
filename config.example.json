@@ -22,7 +22,7 @@
   "database": {
     "type": "sqlite",
     "connection": "./lujs.sqlite",
-    "rebuild": false,
+    "rebuild": true,
     "models": "./DB/Models/"
   },
   "cdclient": {
