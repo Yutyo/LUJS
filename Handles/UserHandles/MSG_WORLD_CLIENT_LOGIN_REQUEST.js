@@ -28,6 +28,7 @@ function MSG_WORLD_CLIENT_LOGIN_REQUEST(handler) {
 
             let zone = servers.findZone(character.zone)[0];
 
+            console.log(zone.luz.spawnX);
             character.x = zone.luz.spawnX;
             character.y = zone.luz.spawnY;
             character.z = zone.luz.spawnZ;
@@ -36,6 +37,8 @@ function MSG_WORLD_CLIENT_LOGIN_REQUEST(handler) {
             character.rotation_z = zone.luz.spawnrZ;
             character.rotation_w = zone.luz.spawnrW;
             character.save();
+
+            console.log(zone.luz.spawnX);
 
             let response = new TransferToWorld();
             response.ip = zone.rakServer.ip;

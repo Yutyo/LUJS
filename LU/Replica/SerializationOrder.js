@@ -32,7 +32,11 @@ const SerializationOrder = [
     Components.RENDER_COMPONENT,
     Components.MINIGAME_COMPONENT,
     Components.UNKNOWN_107_COMPONENT,
-    Components.TRIGGER_COMPONENT
+    Components.TRIGGER_COMPONENT,
+
+    // Below here are the components that aren't actually serialized, but we need them for the object to think it is ready to go
+    Components.ROCKET_LANDING_COMPONENT,
+    Components.SOUND_AMBIENT_2D_COMPONENT
 ];
 
 module.exports = SerializationOrder;

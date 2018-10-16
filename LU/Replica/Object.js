@@ -2,7 +2,18 @@ const ComponentMask = require('./ComponentMask');
 const Components = require('./Components');
 const SerializationType = require('./SerializationType');
 
-class Object {
+class GameObject {
+    /**
+     *
+     * @param {ReplicaManager} replicaManager
+     * @param {LWOOBJID} id
+     * @param objectTemplate
+     * @param pos
+     * @param rot
+     * @param scale
+     * @param owner
+     * @param data
+     */
     constructor(replicaManager, id, objectTemplate, pos, rot, scale, owner, data) {
 
         this._rm = replicaManager;
@@ -57,7 +68,7 @@ class Object {
             if(this.scale !== 1) {
                 stream.writeFloat(this.scale);
             }
-            stream.writeBit(false); // TODO: Add support for Object World State
+            stream.writeBit(false); // TODO: Add support for GameObject World State
             stream.writeBit(false); // TODO: Add support for GM Level
         }
         stream.writeBit(false); // TODO: add support for child/parent objects
@@ -114,4 +125,4 @@ class Object {
     }
 }
 
-module.exports = Object;
+module.exports = GameObject;

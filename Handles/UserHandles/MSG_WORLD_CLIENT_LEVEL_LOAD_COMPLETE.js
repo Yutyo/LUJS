@@ -40,7 +40,8 @@ function MSG_WORLD_CLIENT_LOGIN_REQUEST(handler) {
 
         //TODO: We need to construct the player
         Character.findById(client.session.character_id).then(character => {
-            server.getServer().manager.getManager('replica').loadObject(1,
+            server.getServer().manager.getManager('replica').loadObject(
+                1,
                 {x: character.x, y: character.y, z: character.z},
                 {x: character.rotation_x, y: character.rotation_y, z: character.rotation_z, w: character.rotation_w},
                 1,

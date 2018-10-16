@@ -13,6 +13,11 @@ class ReplicaManager extends GenericManager {
          * @private
          */
         this._objects = {};
+
+        // now time to wait for objects to load...
+        this.eventBus.on('new-object-loaded', () => {
+
+        });
     }
 
     /**
@@ -29,7 +34,7 @@ class ReplicaManager extends GenericManager {
         if(lwoobjid === undefined) {
             // TODO: Need to set up the LWOOBJID Manager to increment object ID's '.nextID()'?
         }
-        let obj = new Object(lwoobjid, objectTemplate, pos, rot, scale, owner, data);
+        let obj = new Object(this, lwoobjid, objectTemplate, pos, rot, scale, owner, data);
 
         this._objects[obj.ID.low] = obj;
     }
