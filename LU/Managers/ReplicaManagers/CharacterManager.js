@@ -155,7 +155,7 @@ class CharacterManager extends GenericManager {
                     if(data.effect !== undefined) {
                         stream.writeLong(data.effect.id);
                     }
-                    stream.writeBit(data.guild);
+                    stream.writeBit(data.guild !== undefined);
                 });
             }
         });

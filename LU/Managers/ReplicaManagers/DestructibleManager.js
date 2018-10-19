@@ -16,13 +16,14 @@ class DestructibleManager extends GenericManager {
          */
         server.eventBus.on('new-object-created', object => {
             if(object.components.hasComponent(Components.DESTRUCTABLE_COMPONENT)) {
-                manager._data[object.ID.low] = {
-
-                };
+                manager._data[object.ID.low] = {};
 
                 object.addSerializer(SerializationOrder.indexOf(Components.DESTRUCTABLE_COMPONENT), (type, stream) => {
                     let data = manager._data[object.ID.low];
-
+                    if(type === SerializationType.CREATION) {
+                        stream.writeBit(false);
+                        stream.writeBit(false);
+                    }
                 });
             }
         });

@@ -16,13 +16,11 @@ class Unknown107Manager extends GenericManager {
          */
         server.eventBus.on('new-object-created', object => {
             if(object.components.hasComponent(Components.UNKNOWN_107_COMPONENT)) {
-                manager._data[object.ID.low] = {
-
-                };
+                manager._data[object.ID.low] = {};
 
                 object.addSerializer(SerializationOrder.indexOf(Components.UNKNOWN_107_COMPONENT), (type, stream) => {
                     let data = manager._data[object.ID.low];
-
+                    stream.writeBit(false);
                 });
             }
         });

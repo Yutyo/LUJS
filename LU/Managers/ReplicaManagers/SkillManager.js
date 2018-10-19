@@ -16,13 +16,13 @@ class SkillManager extends GenericManager {
          */
         server.eventBus.on('new-object-created', object => {
             if(object.components.hasComponent(Components.SKILL_COMPONENT)) {
-                manager._data[object.ID.low] = {
-
-                };
+                manager._data[object.ID.low] = {};
 
                 object.addSerializer(SerializationOrder.indexOf(Components.SKILL_COMPONENT), (type, stream) => {
                     let data = manager._data[object.ID.low];
-
+                    if(type === SerializationType.CREATION) {
+                        stream.writeBit(false);
+                    }
                 });
             }
         });

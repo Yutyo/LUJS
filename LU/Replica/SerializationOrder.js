@@ -15,6 +15,7 @@ const SerializationOrder = [
     Components.DESTRUCTABLE_COMPONENT,
     Components.COLLECTIBLE_COMPONENT,
     Components.PET_COMPONENT,
+    Components.CHARACTER_COMPONENT,
     Components.SHOOTING_GALLERY_COMPONENT,
     Components.INVENTORY_COMPONENT,
     Components.SCRIPT_COMPONENT,

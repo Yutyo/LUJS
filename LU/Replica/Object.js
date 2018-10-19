@@ -42,7 +42,7 @@ class GameObject {
         this._owner = owner;
         this._data = data;
 
-        this._serializers = {};
+        this._serializers = [];
     }
 
     /**
@@ -72,6 +72,11 @@ class GameObject {
             stream.writeBit(false); // TODO: Add support for GM Level
         }
         stream.writeBit(false); // TODO: add support for child/parent objects
+
+        let serializers = this._serializers;
+        serializers.forEach((serializer) => {
+            serializer(type, stream);
+        })
     }
 
     addSerializer(id, method) {

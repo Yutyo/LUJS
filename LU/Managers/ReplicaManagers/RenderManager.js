@@ -24,7 +24,20 @@ class RenderManager extends GenericManager {
                     let data = manager._data[object.ID.low];
 
                     if(type === SerializationType.CREATION) {
-                        stream.writeLong(data.length);
+                        stream.writeLong(data.effects.length);
+                        for(let i = 0; i < data.effects.length; i ++) {
+                            stream.writeByte(data.effects[i].name.length);
+                            for(let j = 0; j < data.effects[i].name.length; j ++) {
+                                stream.writeChar(data.effects[i].name.charCodeAt(j));
+                            }
+                            stream.writeLong(data.effects[i].effectID);
+                            stream.writeByte(data.effects[i].type.length);
+                            for(let j = 0; j < data.effects[i].type.length; j ++) {
+                                stream.writeShort(data.effects[i].type.charCodeAt(j));
+                            }
+                            stream.writeFloat(data.effects[i].scale);
+                            stream.writeLongLong(data.effects[i].secondary);
+                        }
                     }
                 });
             }

@@ -1,5 +1,7 @@
 const GenericManager = require('./GenericManager');
 const Object = require('../Replica/Object');
+const BitStream = require('node-raknet/BitStream');
+const SerializationType = require('../Replica/SerializationType');
 
 /**
  * A manager for objects in game
@@ -15,8 +17,10 @@ class ReplicaManager extends GenericManager {
         this._objects = {};
 
         // now time to wait for objects to load...
-        this.eventBus.on('new-object-loaded', () => {
-
+        this.eventBus.on('new-object-loaded', (object) => {
+            let stream = new BitStream();
+            stream.writeBit(false); // TODO: wtf is the network id thing?
+            object.serialize(SerializationType.CREATION, stream);
         });
     }
 
