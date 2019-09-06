@@ -42,8 +42,7 @@ const User = sequelize.define('user', {
 });
 
 User.sync({force: rebuildDB}).then(() => {
-    // Table created
-    Log.info("User Table Loaded");
+
 });
 
 module.exports = User;

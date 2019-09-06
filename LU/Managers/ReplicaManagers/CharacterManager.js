@@ -76,9 +76,7 @@ class CharacterManager extends GenericManager {
                         unknown1: false,
                         unknown2: 0,
                     },
-                    effect: {
-                        id: 0
-                    },
+                    effect: undefined,
                     guild: undefined
                 };
 
@@ -108,7 +106,7 @@ class CharacterManager extends GenericManager {
                         stream.writeLong(data.eyebrows);
                         stream.writeLong(data.eyes);
                         stream.writeLong(data.mouth);
-                        stream.writeLongLong(data.accountID);
+                        stream.writeLongLong(data.accountID.high, data.accountID.low);
                         stream.writeLongLong(data.llog);
                         stream.writeLongLong(data.unknown6);
                         stream.writeLongLong(data.legoScore);
@@ -137,6 +135,7 @@ class CharacterManager extends GenericManager {
                         stream.writeLongLong(data.totalRacingImaginationCrates);
                         stream.writeLongLong(data.totalRacingBoostUsed);
                         stream.writeLongLong(data.totalRacingWrecks);
+                        stream.writeLongLong(data.totalRacingSmashables);
                         stream.writeLongLong(data.totalRacingFinished);
                         stream.writeLongLong(data.totalRacingWins);
                         stream.writeBit(data.unknown7 !== undefined);
@@ -159,6 +158,24 @@ class CharacterManager extends GenericManager {
                 });
             }
         });
+    }
+
+    /**
+     *
+     * @param {LWOOBJID} objectID
+     * @returns {Object} the data
+     */
+    getObjectData(objectID) {
+        return this._data[objectID.low];
+    }
+
+    /**
+     *
+     * @param {LWOOBJID} objectID
+     * @param {Object} data
+     */
+    setObjectData(objectID, data) {
+        this._data[objectID.low] = data;
     }
 }
 

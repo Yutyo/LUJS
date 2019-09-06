@@ -40,9 +40,9 @@ const InventoryItem = sequelize.define('inventory_item', {
 });
 
 InventoryItem.sync({force: rebuildDB}).then(() => {
-    // Table loaded
-    Log.info("Inventory Item Table Loaded");
 });
+
+Character.hasMany(InventoryItem, {as: "Items", foreignKey: 'character_id', sourceKey: 'id'});
 
 
 module.exports = InventoryItem;

@@ -3,24 +3,39 @@ const Server = require('./Server');
 const Log = require('./Log');
 const fs = require('fs');
 const path = require('path');
+const Sequelize = require('sequelize');
 
 class Loader {
     static setup(config) {
         global.logLevel = config.logLevel;
         global.maps = config.mapsFolder;
 
-        this.setupDatabase(config);
-        this.setupCDClient(config);
-        this.startServersFromConfig(config);
-        this.addMessageHandles(config);
+        let loader = this;
 
+        this.setupDatabase(config, () => {
+            loader.setupCDClient(config, () => {
+                let handles = [];
+                let normalizedPath = path.join(__dirname, config.handlers);
+                fs.readdirSync(normalizedPath).forEach(function(file) {
+                    handles.push(require(config.handlers + file));
+                });
+
+                loader.startServersFromConfig(config, (rakserver) => {
+                    handles.forEach(function(handle) {
+                        handle(rakserver);
+                    });
+                });
+            });
+        });
     }
 
-    static startServersFromConfig(config) {
+    static startServersFromConfig(config, callback) {
         // Load servers from config file...
         global.servers = [];
+        global.serverPort = 3000;
+
         config.servers.forEach(function(server) {
-            global.servers.push(new Server(new RakServer(server.ip, server.port, server.password), server.zone));
+            global.servers.push(new Server(new RakServer(server.ip, server.port, server.password, callback), server.zone));
         });
 
         // Add method to find zone to this server list
@@ -31,31 +46,15 @@ class Loader {
                     ret.push(server);
                 }
             });
-            return ret;
+
+            return new Promise((resolve, reject) => {
+                resolve(ret);
+            });
         };
     }
 
-    static addMessageHandles(config) {
-        /**
-         * Start dynamically adding modules for handling messages
-         */
-        let normalizedPath = path.join(__dirname, config.handlers);
-        let handles = [];
-
-        fs.readdirSync(normalizedPath).forEach(function(file) {
-            handles.push(require(config.handlers + file));
-        });
-
-        global.servers.forEach(function(server) {
-            handles.forEach(function(handle) {
-                handle(server.rakServer);
-            });
-        });
-    }
-
-    static setupDatabase(config) {
+    static setupDatabase(config, callback) {
         // Setting up ORM
-        const Sequelize = require('sequelize');
         global.rebuildDB = config.database.rebuild;
 
         if(config.database.rebuild) {
@@ -74,22 +73,23 @@ class Loader {
 
         // Test connection
         sequelize.authenticate().then(function(err) {
-            Log.info('Connection has been established successfully.');
+            Log.info('Connected to LUJS DB');
+
+            // Load up models
+            let modelsPath = path.join(__dirname, config.database.models);
+            fs.readdirSync(modelsPath).forEach(function(file) {
+                global[file.split('.')[0]] = (require(config.database.models + file));
+            });
+
+            callback();
         }, function (err) {
             Log.warn('Unable to connect to the database:', err);
         });
 
-        // Load up models
-        let modelsPath = path.join(__dirname, config.database.models);
-        fs.readdirSync(modelsPath).forEach(function(file) {
-            global[file.split('.')[0]] = (require(config.database.models + file));
-        });
+
     }
 
-    static setupCDClient(config) {
-        // Setting up ORM
-        const Sequelize = require('sequelize');
-
+    static setupCDClient(config, callback) {
         // Set up connection information
         global.CDClient = new Sequelize('cdclient', null, null, {
             dialect: config.cdclient.type,
@@ -100,15 +100,17 @@ class Loader {
 
         // Test connection
         CDClient.authenticate().then(function(err) {
-            Log.info('Connection has been established successfully.');
+            Log.info('Connected to CDClient DB');
+
+            // Load up models
+            let modelsPath = path.join(__dirname, config.cdclient.models);
+            fs.readdirSync(modelsPath).forEach(function(file) {
+                global[file.split('.')[0]] = (require(config.cdclient.models + file));
+            });
+
+            callback();
         }, function (err) {
             Log.warn('Unable to connect to the database:', err);
-        });
-
-        // Load up models
-        let modelsPath = path.join(__dirname, config.cdclient.models);
-        fs.readdirSync(modelsPath).forEach(function(file) {
-            global[file.split('.')[0]] = (require(config.cdclient.models + file));
         });
     }
 }

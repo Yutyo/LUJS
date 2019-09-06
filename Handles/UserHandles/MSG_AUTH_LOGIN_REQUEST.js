@@ -9,7 +9,7 @@ const LUClientMessageType = require('../../LU/Message Types/LUClientMessageType'
 const BitStream = require('node-raknet/BitStream');
 const {ReliabilityLayer, Reliability} = require('node-raknet/ReliabilityLayer.js');
 const {LoginInfo, LoginCodes} = require('../../LU/Messages/LoginInfo');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 function rand(size) {
     let chars = "abcdefghijklmnopqrstuvwxyz1234567890";
@@ -60,28 +60,48 @@ function MSG_AUTH_LOGIN_REQUEST(handler) {
                     response.code = LoginCodes.success;
 
                     // Find the world server acting as the char server
-                    let redirect = servers.findZone(0)[0];
-                    response.redirectIP = redirect.rakServer.ip;
-                    response.redirectPort = redirect.rakServer.port;
-                    response.chatIP = redirect.rakServer.ip;
-                    response.chatPort = redirect.rakServer.port;
-                    response.altIP = redirect.rakServer.ip;
+                    servers.findZone(0).then((servers) => {
+                        let redirect = servers[0];
+                        response.redirectIP = redirect.rakServer.ip;
+                        response.redirectPort = redirect.rakServer.port;
+                        response.chatIP = redirect.rakServer.ip;
+                        response.chatPort = redirect.rakServer.port;
+                        response.altIP = redirect.rakServer.ip;
 
-                    //Session stuff.
-                    // TODO: Check if the user already has a login from this ip, if so kill that session (and log out the other user logged in at some point)
-                    // TODO: Check to see if there is already an existing session for this user, if so, use it
-                    // TODO: Actually store this in the DB
-                    response.session = rand(32);
-                    let today = new Date();
+                        //Session stuff.
+                        // TODO: Check if the user already has a login from this ip, if so kill that session (and log out the other user logged in at some point)
+                        // TODO: Check to see if there is already an existing session for this user, if so, use it
+                        // TODO: Actually store this in the DB
+                        response.session = rand(32);
+                        let today = new Date();
 
-                    Session.create({
-                        key: response.session,
-                        start_time: today,
-                        end_time: new Date(today.getTime() + (24 * 60 * 60 * 1000)),
-                        ip: user.address,
-                        user_id: userModel.id
+                        Session.create({
+                            key: response.session,
+                            start_time: today,
+                            end_time: new Date(today.getTime() + (24 * 60 * 60 * 1000)),
+                            ip: user.address,
+                            user_id: userModel.id
+                        });
+
+                        response.clientVersionMajor = 1;
+                        response.clientVersionCurrent = 10;
+                        response.clientVersionMinor = 64;
+                        response.localization = 'US';
+                        //TODO: Actually get this from the DB
+                        response.firstSubscription = false;
+                        //TODO: Actually get this from the DB
+                        response.freeToPlay = false;
+
+                        let send = new BitStream();
+                        send.writeByte(RakMessages.ID_USER_PACKET_ENUM);
+                        send.writeShort(LURemoteConnectionType.client);
+                        send.writeLong(LUClientMessageType.LOGIN_RESPONSE);
+                        send.writeByte(0);
+                        response.serialize(send);
+                        client.send(send, Reliability.RELIABLE_ORDERED);
                     });
 
+                    return;
                 } else {
                     response.code = LoginCodes.badPassword;
                 }

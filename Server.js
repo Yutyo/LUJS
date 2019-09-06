@@ -6,6 +6,7 @@ const BitStream = require('node-raknet/BitStream');
 const Manager = require('./LU/Managers/Manager');
 const ReplicaManager = require('./LU/Managers/ReplicaManager');
 const LWOOBJIDManager = require('./LU/Managers/LWOOBJIDManager');
+const ChatManager = require('./LU/Managers/ChatManager');
 
 //Replica component managers
 const CharacterManager = require('./LU/Managers/ReplicaManagers/CharacterManager');
@@ -23,8 +24,9 @@ class Server {
      *
      * @param {RakServer} rakserver
      * @param {Number} zoneID
+     * @param Function callback
      */
-    constructor(rakserver, zoneID) {
+    constructor(rakserver, zoneID, callback) {
         this._rakserver = rakserver;
         this._rakserver.userMessageHandler = new EventEmitter();
         this._zoneID = zoneID;
@@ -34,13 +36,14 @@ class Server {
         };
 
         if(this.zoneID > 0) {
-            this.loadLUZ(this.zoneID);
+            this.loadLUZ(this.zoneID).then(() => {if(callback !== undefined) callback(server);} );
         }
 
         // Attach managers
         this._manager = new Manager();
         this._manager.attachManager('replica', new ReplicaManager(this));
         this._manager.attachManager('lwoobjid', new LWOOBJIDManager(this));
+        this._manager.attachManager('chat', new ChatManager(this));
 
         // Replica Components
         this._manager.attachManager('character', new CharacterManager(this));
@@ -75,8 +78,19 @@ class Server {
     }
 
     loadLUZ(zoneID) {
-        ZoneTable.findById(zoneID).then(zone => {
+        return ZoneTable.findById(zoneID).then(zone => {
             this._luz = new LUZ(new BitStream(fs.readFileSync(maps + zone.zoneName)));
+        });
+    }
+
+    /**
+     * Broadcasts message to all clients connected
+     * @param {BitStream} stream
+     * @param {Number} reliability
+     */
+    broadcast(stream, reliability) {
+        this._rakserver.connections.forEach(client => {
+            client.send(stream, reliability);
         });
     }
 }

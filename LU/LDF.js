@@ -81,7 +81,8 @@ class LDF {
             let ldf = this._ldf[i];
             stream.writeByte(ldf.key.length * 2);
             for(let k = 0; k < ldf.key.length; k ++) {
-                stream.writeShort(ldf.key.charCodeAt[k]);
+                stream.writeChar(ldf.key.charCodeAt(k));
+                stream.writeByte(0);
             }
             stream.writeByte(ldf.type);
             switch(ldf.type) {
@@ -92,8 +93,7 @@ class LDF {
                     }
                     break;
                 case 1:
-                    // TODO: Not implemented yet
-                    // stream.writeSignedLong(ldf.value);
+                    stream.writeSignedLong(ldf.value);
                     break;
                 case 3:
                     stream.writeFloat(ldf.value);
@@ -109,7 +109,7 @@ class LDF {
                     stream.writeBoolean(ldf.value);
                     break;
                 case 8:
-                    stream.writeLongLong(ldf.value);
+                    stream.writeLongLong(ldf.value.high(), ldf.value.low());
                     break;
                 case 9:
                     ldf.value.serialize(stream);

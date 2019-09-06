@@ -14,6 +14,7 @@ const Log = require('../../Log');
 function ID_DISCONNECTION_NOTIFICATION(server) {
     server.on(String(RakMessages.ID_DISCONNECTION_NOTIFICATION), function(packet, user) {
         Log.info(`Client ${user.address} has disconnected`);
+        // TODO: Save users info from memory to DB here...
     });
 }
 

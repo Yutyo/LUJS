@@ -26,32 +26,30 @@ function MSG_WORLD_CLIENT_LOGIN_REQUEST(handler) {
                 character.zone = 1000;
             }
 
-            let zone = servers.findZone(character.zone)[0];
+            servers.findZone(character.zone).then((servers) => {
+                let zone = servers[0];
+                character.x = zone.luz.spawnX;
+                character.y = zone.luz.spawnY;
+                character.z = zone.luz.spawnZ;
+                character.rotation_x = zone.luz.spawnrX;
+                character.rotation_y = zone.luz.spawnrY;
+                character.rotation_z = zone.luz.spawnrZ;
+                character.rotation_w = zone.luz.spawnrW;
+                character.save();
 
-            console.log(zone.luz.spawnX);
-            character.x = zone.luz.spawnX;
-            character.y = zone.luz.spawnY;
-            character.z = zone.luz.spawnZ;
-            character.rotation_x = zone.luz.spawnrX;
-            character.rotation_y = zone.luz.spawnrY;
-            character.rotation_z = zone.luz.spawnrZ;
-            character.rotation_w = zone.luz.spawnrW;
-            character.save();
+                let response = new TransferToWorld();
+                response.ip = zone.rakServer.ip;
+                response.port = zone.rakServer.port;
+                response.mythranShift = false;
 
-            console.log(zone.luz.spawnX);
-
-            let response = new TransferToWorld();
-            response.ip = zone.rakServer.ip;
-            response.port = zone.rakServer.port;
-            response.mythranShift = false;
-
-            let send = new BitStream();
-            send.writeByte(RakMessages.ID_USER_PACKET_ENUM);
-            send.writeShort(LURemoteConnectionType.client);
-            send.writeLong(LUClientMessageType.TRANSFER_TO_WORLD);
-            send.writeByte(0);
-            response.serialize(send);
-            client.send(send, Reliability.RELIABLE_ORDERED);
+                let send = new BitStream();
+                send.writeByte(RakMessages.ID_USER_PACKET_ENUM);
+                send.writeShort(LURemoteConnectionType.client);
+                send.writeLong(LUClientMessageType.TRANSFER_TO_WORLD);
+                send.writeByte(0);
+                response.serialize(send);
+                client.send(send, Reliability.RELIABLE_ORDERED);
+            });
         });
     });
 }

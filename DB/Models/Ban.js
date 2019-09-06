@@ -26,8 +26,6 @@ const Ban = sequelize.define('ban', {
 });
 
 Ban.sync({force: rebuildDB}).then(() => {
-    // Table loaded
-    Log.info("Ban Table Loaded");
 });
 
 

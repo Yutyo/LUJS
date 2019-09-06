@@ -73,11 +73,13 @@ class ControllablePhysicsManager extends GenericManager {
                             stream.writeFloat(data.positionData.velocity.y);
                             stream.writeFloat(data.positionData.velocity.z);
                         }
+                        stream.writeBit(data.positionData.angularVelocity !== undefined);
                         if(data.positionData.angularVelocity !== undefined) {
                             stream.writeFloat(data.positionData.angularVelocity.x);
                             stream.writeFloat(data.positionData.angularVelocity.y);
                             stream.writeFloat(data.positionData.angularVelocity.z);
                         }
+                        stream.writeBit(data.positionData.movingPlatformData !== undefined);
                         if(data.positionData.movingPlatformData !== undefined) {
                             stream.writeLongLong(data.positionData.movingPlatformData.objectID);
                             stream.writeFloat(data.positionData.movingPlatformData.unknown1);

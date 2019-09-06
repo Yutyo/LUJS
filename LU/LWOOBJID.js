@@ -21,6 +21,11 @@ class LWOOBJID {
         this._bottom = stream.readLong();
         this._top = stream.readLong();
     }
+
+    toString() {
+        // TODO: need to fix this i guess
+        return this._bottom.toString();
+    }
 }
 
 module.exports = LWOOBJID;

@@ -35,8 +35,7 @@ const Session = sequelize.define('session', {
 });
 
 Session.sync({force: rebuildDB}).then(() => {
-    // Table created
-    Log.info("Session Table Loaded");
+
 });
 
 

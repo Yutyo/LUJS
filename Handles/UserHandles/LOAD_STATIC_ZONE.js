@@ -15,7 +15,7 @@ function LOAD_STATIC_ZONE(handler) {
         let client = server.getClient(user.address);
 
         if(server.getServer().zoneID > 0) {
-            // They are connected to a world server, time to send them some infor
+            // They are connected to a world server, time to send them some information
             let response = new LoadStaticZone();
 
             response.zoneID = server.getServer().zoneID;

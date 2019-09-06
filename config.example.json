@@ -32,5 +32,7 @@
   },
   "handlers": "./Handles/MessageHandles/",
   "logLevel": 5,
-  "mapsFolder": "You need to edit the config file to point to your maps folder"
+  "mapsFolder": "You need to edit the config file to point to your maps folder",
+  "globalIP": "127.0.0.1",
+  "globalPassword": "3.25 ND"
 }

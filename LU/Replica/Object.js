@@ -1,11 +1,13 @@
 const ComponentMask = require('./ComponentMask');
 const Components = require('./Components');
 const SerializationType = require('./SerializationType');
+const EventEmitter = require('events').EventEmitter;
 
 class GameObject {
     /**
      *
      * @param {ReplicaManager} replicaManager
+     * @param {Number} networkId
      * @param {LWOOBJID} id
      * @param objectTemplate
      * @param pos
@@ -14,9 +16,11 @@ class GameObject {
      * @param owner
      * @param data
      */
-    constructor(replicaManager, id, objectTemplate, pos, rot, scale, owner, data) {
+    constructor(replicaManager, networkId, id, objectTemplate, pos, rot, scale, owner, data) {
 
         this._rm = replicaManager;
+
+        this._netId = networkId;
 
         // For use of keeping track of the object
         this._id = id;
@@ -43,6 +47,8 @@ class GameObject {
         this._data = data;
 
         this._serializers = [];
+
+        this._bus = new EventEmitter();
     }
 
     /**
@@ -52,12 +58,12 @@ class GameObject {
      */
     serialize(type, stream) {
         if(type === SerializationType.CREATION) {
-            stream.writeLong(this.ID.low);
-            stream.writeLong(this.ID.high);
+            stream.writeLongLong(this.ID.high, this.ID.low);
 
             stream.writeLong(this.LOT);
 
-            stream.writeByte(0); // TODO: add a name field and serialize it here
+            stream.writeByte("testing".length); // TODO: add a name field and serialize it here
+            stream.writeWString("testing", "testing".length);
 
             stream.writeLong(0); // TODO: Keep track of how long this object has been created on server
             stream.writeBit(false); // TODO: Add support for this structure
@@ -76,7 +82,7 @@ class GameObject {
         let serializers = this._serializers;
         serializers.forEach((serializer) => {
             serializer(type, stream);
-        })
+        });
     }
 
     addSerializer(id, method) {
@@ -127,6 +133,29 @@ class GameObject {
 
     get data() {
         return this._data;
+    }
+
+    get netID() {
+        return this._netId;
+    }
+
+    /**
+     *
+     * @param {Number} id
+     * @param {LUGameMessage} gm
+     * @param user
+     */
+    emitGM(id, gm, user) {
+        this._bus.emit(id.toString(), gm, user, this);
+    }
+
+    /**
+     *
+     * @param {Number} id
+     * @param {Function} callback
+     */
+    addGMListener(id, callback) {
+        this._bus.on(id.toString(), callback);
     }
 }
 

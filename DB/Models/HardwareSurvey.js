@@ -42,8 +42,6 @@ const HardwareSurvey = sequelize.define('hardware_survey', {
 });
 
 HardwareSurvey.sync({force: rebuildDB}).then(() => {
-    // Table created
-    Log.info("HardwareSurvey Table Loaded");
 });
 
 module.exports = HardwareSurvey;

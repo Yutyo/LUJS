@@ -24,6 +24,13 @@ class DestructibleManager extends GenericManager {
                         stream.writeBit(false);
                         stream.writeBit(false);
                     }
+
+                    // Stats component
+                    stream.writeBit(false);
+                    if(type === SerializationType.CREATION) {
+                        stream.writeBit(false);
+                    }
+                    stream.writeBit(false);
                 });
             }
         });

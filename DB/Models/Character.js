@@ -117,8 +117,6 @@ const Character = sequelize.define('character', {
 });
 
 Character.sync({force: rebuildDB}).then(() => {
-    // Table loaded
-    Log.info("Character Table Loaded");
 });
 
 

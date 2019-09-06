@@ -55,6 +55,29 @@ function ID_USER_PACKET_ENUM(server) {
             }
             Log.debug(`No listeners found for: ${[LURemoteConnectionType.key(remoteConnectionType),string].join(', ')}`);
         }
+
+        let string = "";
+        switch (remoteConnectionType) {
+            case LURemoteConnectionType.general:
+                string = LUGeneralMessageType.key(packetID);
+                break;
+            case LURemoteConnectionType.client:
+                string = LUClientMessageType.key(packetID);
+                break;
+            case LURemoteConnectionType.authentication:
+                string = LUAthenticationMessageType.key(packetID);
+                break;
+            case LURemoteConnectionType.chat:
+                string = LUChatMessageType.key(packetID);
+                break;
+            case LURemoteConnectionType.server:
+                string = LUServerMessageType.key(packetID);
+                break;
+            case LURemoteConnectionType.internal:
+                break;
+
+        }
+        Log.debug(`got: ${[LURemoteConnectionType.key(remoteConnectionType),string].join(', ')}`);
     });
 }
 

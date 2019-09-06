@@ -39,7 +39,7 @@ class LUZ {
             this.spawnrW = stream.readFloat();
         }
 
-        let sceneCount;
+        let sceneCount = 0;
         if(this.version < 0x25) {
             sceneCount = stream.readByte();
         } else {
@@ -61,7 +61,7 @@ class LUZ {
                 id: id,
                 isAudioScene: isAudioScene,
                 sceneName: sceneName
-            })
+            });
         }
 
         let unknown2 = stream.readByte();
@@ -71,7 +71,7 @@ class LUZ {
 
         if(this.version >= 0x20) {
             let countOfSceneTransitions = stream.readLong();
-            this.sceneTransitions =[];
+            this.sceneTransitions = [];
             for(let i = 0; i < countOfSceneTransitions; i ++) {
                 let sceneTransitionName = "";
                 if(this.version < 0x25) {
@@ -89,7 +89,7 @@ class LUZ {
                 };
 
                 for(let j = 0; j < loopTimes; j ++) {
-                    sceneTransition.push({
+                    sceneTransition.transitionPoints.push({
                         sceneId: stream.readLongLong(),
                         x: stream.readFloat(),
                         y: stream.readFloat(),
@@ -123,7 +123,7 @@ class LUZ {
                             stream.readByte();
                         } else if (path.version >= 13) {
                             let temp = stream.readByte();
-                            for(let j = 0; j < temp; j ++) {
+                            for(let k = 0; k < temp; k ++) {
                                 stream.readShort();
                             }
                         }
@@ -137,7 +137,7 @@ class LUZ {
                         for(let j = 0; j < temp2; j ++) {
                             stream.readShort();
                         }
-                        let temp3 = stream.readByte();
+                        let temp3 = stream.readLong();
                         for(let j = 0; j < temp3; j ++) {
                             stream.readShort();
                         }
@@ -161,7 +161,7 @@ class LUZ {
                     case PathType.SPAWNER:
                         let spawnedLOT = stream.readLong();
                         let respawnTime = stream.readLong();
-                        let max = stream.readSignedLong();
+                        let max = stream.readLong();
                         let min = stream.readLong();
                         let spawnerID = stream.readLongLong();
                         let activateOnLoad = stream.readBoolean();
