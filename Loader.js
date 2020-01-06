@@ -60,7 +60,9 @@ class Loader {
         if(config.database.rebuild) {
             Log.info('Rebuilding the database');
             config.database.rebuild = false;
-            fs.writeFile('config.json', JSON.stringify(config, null, 4));
+            fs.writeFile('config.json', JSON.stringify(config, null, 4), (err) => {
+                if(err) throw err;
+            });
         }
 
         // Set up connection information

@@ -78,7 +78,7 @@ class Server {
     }
 
     loadLUZ(zoneID) {
-        return ZoneTable.findById(zoneID).then(zone => {
+        return ZoneTable.findByPk(zoneID).then(zone => {
             this._luz = new LUZ(new BitStream(fs.readFileSync(maps + zone.zoneName)));
         });
     }
