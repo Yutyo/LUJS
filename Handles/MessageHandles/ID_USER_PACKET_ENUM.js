@@ -6,7 +6,7 @@ const RakMessages = require('node-raknet/RakMessages.js');
 const BitStream = require('node-raknet/BitStream.js');
 const LURemoteConnectionType = require('../../LU/Message Types/LURemoteConnectionType');
 const LUGeneralMessageType = require('../../LU/Message Types/LUGeneralMessageType');
-const LUAthenticationMessageType = require('../../LU/Message Types/LUAuthenticationMessageType');
+const LUAuthenticationMessageType = require('../../LU/Message Types/LUAuthenticationMessageType');
 const LUChatMessageType = require('../../LU/Message Types/LUChatMessageType');
 const LUServerMessageType = require('../../LU/Message Types/LUServerMessageType');
 const LUClientMessageType = require('../../LU/Message Types/LUClientMessageType');
@@ -41,7 +41,7 @@ function ID_USER_PACKET_ENUM(server) {
                     string = LUClientMessageType.key(packetID);
                     break;
                 case LURemoteConnectionType.authentication:
-                    string = LUAthenticationMessageType.key(packetID);
+                    string = LUAuthenticationMessageType.key(packetID);
                     break;
                 case LURemoteConnectionType.chat:
                     string = LUChatMessageType.key(packetID);
@@ -65,7 +65,7 @@ function ID_USER_PACKET_ENUM(server) {
                 string = LUClientMessageType.key(packetID);
                 break;
             case LURemoteConnectionType.authentication:
-                string = LUAthenticationMessageType.key(packetID);
+                string = LUAuthenticationMessageType.key(packetID);
                 break;
             case LURemoteConnectionType.chat:
                 string = LUChatMessageType.key(packetID);
@@ -77,7 +77,6 @@ function ID_USER_PACKET_ENUM(server) {
                 break;
 
         }
-        Log.debug(`got: ${[LURemoteConnectionType.key(remoteConnectionType),string].join(', ')}`);
     });
 }
 

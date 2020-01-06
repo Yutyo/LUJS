@@ -23,8 +23,9 @@ class LWOOBJID {
     }
 
     toString() {
-        // TODO: need to fix this i guess
-        return this._bottom.toString();
+        let top = BigInt(this._top) * 4294967296n;
+        let bottom = BigInt(this._bottom);
+        return (top + bottom).toString();
     }
 }
 

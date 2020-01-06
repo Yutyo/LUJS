@@ -26,11 +26,11 @@ class InventoryManager extends GenericManager {
                     if(data.inventory !== undefined) {
                         stream.writeLong(data.inventory.length);
                         for(let i = 0; i < data.inventory.length; i ++) {
-                            stream.writeLongLong(data.inventory[i].id.high, data.inventory[i].id.high);
+                            stream.writeLongLong(data.inventory[i].id.high, data.inventory[i].id.low);
                             stream.writeLong(data.inventory[i].lot);
                             stream.writeBit(false);
-                            stream.writeBit(data.inventory[i].count > 1);
-                            if(data.inventory[i].count > 1) {
+                            stream.writeBit(data.inventory[i].count > 0);
+                            if(data.inventory[i].count > 0) {
                                 stream.writeLong(data.inventory[i].count);
                             }
                             stream.writeBit(data.inventory[i].slot !== -1);
@@ -39,7 +39,7 @@ class InventoryManager extends GenericManager {
                             }
                             stream.writeBit(false);
                             stream.writeBit(false);
-                            stream.writeBit(false);
+                            stream.writeBit(true);
                         }
                     }
                     stream.writeBit(false);

@@ -115,7 +115,7 @@ class LDF {
                     ldf.value.serialize(stream);
                     break;
                 case 13:
-                    stream.writeByte(ldf.value.length);
+                    stream.writeLong(ldf.value.length);
                     for(let k = 0; k < ldf.value.length; k ++) {
                         stream.writeByte(ldf.value.charCodeAt[k]);
                     }
