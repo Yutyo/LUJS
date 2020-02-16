@@ -12,15 +12,21 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "fs-extra": "^6.0.1",
+    "extract-zip": "^1.6.7",
+    "fs-extra": "^8.1.0",
     "inet-aton": "git+https://git@github.com/RaineBannister/inet-aton.git",
     "lugamemessages": "git+https://git@github.com/RaineBannister/lu-game-messages.git",
+    "md5-file": "^4.0.0",
     "node-raknet": "git+https://git@github.com/RaineBannister/node-raknet.git",
-    "sequelize": "^4.44.3",
+    "sequelize": "^5.21.4",
     "sqlite": "^3.0.3",
     "sqlite3": "^4.1.1",
-    "xmlbuilder": "^12.0.1"
+    "xmlbuilder": "^13.0.2"
   },
   "author": "Raine Bannister",
-  "license": "ISC"
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RaineBannister/lujs/issues"
+  },
+  "homepage": "https://github.com/RaineBannister/lujs#readme"
 }

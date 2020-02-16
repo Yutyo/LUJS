@@ -106,7 +106,7 @@ class CharacterManager extends GenericManager {
                         stream.writeLong(data.eyebrows);
                         stream.writeLong(data.eyes);
                         stream.writeLong(data.mouth);
-                        stream.writeLongLong(data.accountID.high, data.accountID.low);
+                        stream.writeLongLong(0, data.accountID);
                         stream.writeLongLong(data.llog);
                         stream.writeLongLong(data.unknown6);
                         stream.writeLongLong(data.legoScore);

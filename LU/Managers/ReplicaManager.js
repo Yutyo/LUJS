@@ -37,7 +37,7 @@ class ReplicaManager extends GenericManager {
             // we need to broadcast this creation to all users...
 
             //server.broadcast(stream, Reliability.RELIABLE);
-            if(this._callbacks[object.ID.low] !== undefined) this._callbacks[object.ID.low](object);
+            this._callbacks[object.ID.low](object);
             //stream.toFile((Date.now() / 1000 | 0) + "_[24]_[01-00]_(1).bin");
         });
     }
@@ -51,9 +51,8 @@ class ReplicaManager extends GenericManager {
      * @param owner
      * @param data
      * @param {LWOOBJID} [lwoobjid]
-     * @param {Function} [callback]
      */
-    loadObject(objectTemplate, pos, rot, scale, owner, data, lwoobjid, callback) {
+    loadObject(objectTemplate, pos, rot, scale, owner, data, lwoobjid) {
         this._count ++;
         if(lwoobjid === undefined) {
             // TODO: Need to set up the LWOOBJID Manager to increment object ID's '.nextID()'?
@@ -63,8 +62,14 @@ class ReplicaManager extends GenericManager {
 
         let obj = new Object(this, this._count, lwoobjid, objectTemplate, pos, rot, scale, owner, data);
 
+        let manager = this;
+
+        let promise = new Promise((resolve, reject) => {
+            manager._callbacks[obj.ID.low] = resolve;
+        });
         this._objects[obj.ID.low] = obj;
-        if(callback !== undefined) this._callbacks[obj.ID.low] = callback;
+
+        return promise;
     }
 
     constructObject(id) {

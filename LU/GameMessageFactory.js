@@ -1,4 +1,5 @@
 const GameMessage = require('lugamemessages/GameMessages').GameMessages;
+const GameMessageKey = require('lugamemessages/GameMessages').GameMessageKey;
 
 class GameMessageFactory {
     /**
@@ -10,6 +11,7 @@ class GameMessageFactory {
         let gm = GameMessage[ID];
         if(gm !== undefined) {
             let toRet = new LUGameMessage(ID);
+            toRet.properties = properties;
             return toRet;
         }
     }
@@ -48,6 +50,45 @@ class LUGameMessage {
      */
     serialize(stream) {
         stream.writeShort(this._id);
+
+        let structure = GameMessage[this._id];
+
+        for (let name in structure) {
+            if (!structure.hasOwnProperty(name)) continue;
+
+            if(structure[name].default !== undefined) {
+                if(this._data[name] === undefined) {
+                    // if the data is omitted then we just use default values
+                    if(structure[name].type !== 'bit') {
+                        stream.writeBit(false);
+                    } else {
+                        stream.writeBit(structure[name].default);
+                    }
+                    continue;
+                } else {
+                    if(structure[name].type !== 'bit') {
+                        stream.writeBit(true);
+                    }
+                }
+            } else {
+                // if there is no default then if we don't have data defined for this field we need to throw an error
+                if(this._data[name] === undefined) {
+                    throw Error(name + " was not provided when creating game message " + GameMessageKey.key(this._id));
+                }
+            }
+
+            switch(structure[name].type) {
+                case 'bit':
+                    stream.writeBit(this._data[name]);
+                    break;
+                case 'int':
+                    stream.writeLong(this._data[name]);
+                    break;
+                case 'float':
+                    stream.writeFloat(this._data[name]);
+                    break;
+            }
+        }
     }
 
     /**
@@ -78,6 +119,14 @@ class LUGameMessage {
 
     get properties() {
         return this._data;
+    }
+
+    /**
+     *
+     * @param properties
+     */
+    set properties(properties) {
+        this._data = properties
     }
 }
 

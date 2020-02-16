@@ -5,6 +5,9 @@ const LURemoteConnectionType = require('../Message Types/LURemoteConnectionType'
 const {ReliabilityLayer, Reliability} = require('node-raknet/ReliabilityLayer.js');
 const BitStream = require('node-raknet/BitStream');
 const RakMessages = require('node-raknet/RakMessages.js');
+const GameMessageFactory = require('../../LU/GameMessageFactory');
+const GameMessageKey = require('lugamemessages/GameMessages').GameMessageKey;
+const LWOOBJID = require('../../LU/LWOOBJID');
 
 /**
  * A manager for basic chat functionality
@@ -69,6 +72,24 @@ class ChatManager extends GenericManager {
                     client.send(send, Reliability.RELIABLE_ORDERED);
                 });
             });
+        };
+
+        this._commands["fly"] = (sender, client, args) => {
+            let stream = new BitStream();
+            stream.writeByte(RakMessages.ID_USER_PACKET_ENUM);
+            stream.writeShort(LURemoteConnectionType.client);
+            stream.writeLong(LUClientMessageType.GAME_MSG);
+            stream.writeByte(0);
+            new LWOOBJID(0x1de0b6b5, client.session.character_id).serialize(stream);
+            GameMessageFactory.makeMessage(GameMessageKey.setJetPackMode, {
+                bypassChecks: true,
+                use: true,
+                effectID: 0xA7
+            }).serialize(stream);
+
+            console.log(stream.toBinaryString());
+
+            client.send(stream, Reliability.RELIABLE);
         }
     }
 }
