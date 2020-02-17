@@ -13,6 +13,8 @@ const SerializationType = require('../../LU/Replica/SerializationType');
 const CharData = require('../../LU/CharData');
 let promisify = require('util').promisify;
 
+const {Character} = require('../../DB/LUJS');
+
 const zlibDeflate = promisify(zlib.deflate);
 
 function MSG_WORLD_CLIENT_LOGIN_REQUEST(handler) {

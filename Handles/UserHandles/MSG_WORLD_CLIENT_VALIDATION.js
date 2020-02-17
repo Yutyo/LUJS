@@ -12,6 +12,8 @@ const UserSessionInfo = require('../../LU/Messages/UserSessionInfo');
 const {DisconnectNotify, DisconnectNotifyReason} = require('../../LU/Messages/DisconnectNotify');
 const Sequelize = require('sequelize');
 
+const {Session, User} = require('../../DB/LUJS');
+
 function MSG_WORLD_CLIENT_VALIDATION(handler) {
     handler.on([LURemoteConnectionType.server, LUServerMessageType.MSG_WORLD_CLIENT_VALIDATION].join(), function(server, packet, user) {
         let client = server.getClient(user.address);

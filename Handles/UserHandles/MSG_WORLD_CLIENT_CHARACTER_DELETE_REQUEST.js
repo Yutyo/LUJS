@@ -10,6 +10,8 @@ const BitStream = require('node-raknet/BitStream');
 const {ReliabilityLayer, Reliability} = require('node-raknet/ReliabilityLayer.js');
 const {MinifigDeleteResponse, DeletionResponse} = require('../../LU/Messages/MinifigDeleteResponse');
 
+const {Character} = require('../../DB/LUJS');
+
 function MSG_WORLD_CLIENT_CHARACTER_DELETE_REQUEST(handler) {
     handler.on([LURemoteConnectionType.server, LUServerMessageType.MSG_WORLD_CLIENT_CHARACTER_DELETE_REQUEST].join(), function(server, packet, user) {
         let client = server.getClient(user.address);

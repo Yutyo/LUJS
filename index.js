@@ -9,7 +9,7 @@ if(!fs.existsSync('config.json')) {
     fse.copySync('config.example.json', 'config.json');
 }
 const config = JSON.parse(fs.readFileSync('config.json'));
-
+global.database = config.database;
 
 const Loader = require('./Loader');
 Loader.setup(config);

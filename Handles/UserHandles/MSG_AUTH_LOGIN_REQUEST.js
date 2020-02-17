@@ -10,6 +10,7 @@ const BitStream = require('node-raknet/BitStream');
 const {ReliabilityLayer, Reliability} = require('node-raknet/ReliabilityLayer.js');
 const {LoginInfo, LoginCodes} = require('../../LU/Messages/LoginInfo');
 const bcrypt = require('bcryptjs');
+const {Session, User} = require('../../DB/LUJS');
 
 function rand(size) {
     let chars = "abcdefghijklmnopqrstuvwxyz1234567890";

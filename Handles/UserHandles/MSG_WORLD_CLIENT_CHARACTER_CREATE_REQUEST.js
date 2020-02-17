@@ -13,6 +13,8 @@ const MinifigList = require('../../LU/Messages/MinifigList');
 const {MinifigCreateResponse, CreationResponse} = require('../../LU/Messages/MinifigCreateResponse');
 const Sequelize = require('sequelize');
 
+const {Character, InventoryItem} = require('../../DB/LUJS');
+
 function MSG_WORLD_CLIENT_CHARACTER_CREATE_REQUEST(handler) {
     handler.on([LURemoteConnectionType.server, LUServerMessageType.MSG_WORLD_CLIENT_CHARACTER_CREATE_REQUEST].join(), function(server, packet, user) {
         let client = server.getClient(user.address);

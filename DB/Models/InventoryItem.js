@@ -39,5 +39,3 @@ module.exports = sequelize => {
         }
     });
 };
-
-Character.hasMany(InventoryItem, {as: "Items", foreignKey: 'character_id', sourceKey: 'id'});

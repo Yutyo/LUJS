@@ -42,7 +42,7 @@ class Server {
         };
 
         if(this.zoneID > 0) {
-            this.loadLUZ(this.zoneID).then(() => {if(callback !== undefined) callback(server);} );
+            this.loadLUZ(this.zoneID);
         }
 
         // Attach managers
@@ -109,7 +109,7 @@ class Server {
      * @param {Number} zoneID
      * @return {Promise<>}
      */
-    #loadLUZ(zoneID) {
+    loadLUZ(zoneID) {
         let server = this;
         return ZoneTable.findByPk(zoneID).then(zone => {
             return readfile(maps + zone.zoneName);

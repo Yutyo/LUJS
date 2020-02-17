@@ -76,18 +76,18 @@ class Loader {
 
     static setupDatabase() {
         // Setting up ORM
-        global.rebuildDB = config.database.rebuild;
 
-        if(config.database.rebuild) {
+
+        /*if(config.database.rebuild) {
             Log.info('Rebuilding the database');
             config.database.rebuild = false;
             fs.writeFile('config.json', JSON.stringify(config, null, 4), (err) => {
                 if(err) throw err;
             });
-        }
+        }*/
 
         // Set up connection information
-        let sequelize = new Sequelize('lujs', null, null, {
+        /*let sequelize = new Sequelize('lujs', null, null, {
             dialect: config.database.type,
             operatorsAliases: false,
             storage: config.database.connection,
@@ -106,7 +106,9 @@ class Loader {
             files.forEach(function(file) {
                 global[file.split('.')[0]] = (require(config.database.models + file));
             });
-        });
+        });*/
+
+        return new Promise((resolve) => {resolve()});
     }
 
     static setupCDClient() {

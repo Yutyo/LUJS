@@ -9,6 +9,8 @@ const GameMessageFactory = require('../../LU/GameMessageFactory');
 const GameMessageKey = require('lugamemessages/GameMessages').GameMessageKey;
 const LWOOBJID = require('../../LU/LWOOBJID');
 
+const {Character} = require('../../DB/LUJS');
+
 /**
  * A manager for basic chat functionality
  */

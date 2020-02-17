@@ -7,6 +7,8 @@ const LUClientMessageType = require('../../LU/Message Types/LUClientMessageType'
 const TransferToWorld = require('../../LU/Messages/TransferToWorld');
 const LWOOBJID = require('../../LU/LWOOBJID');
 
+const {Character} = require('../../DB/LUJS');
+
 function MSG_WORLD_CLIENT_LOGIN_REQUEST(handler) {
     handler.on([LURemoteConnectionType.server, LUServerMessageType.MSG_WORLD_CLIENT_LOGIN_REQUEST].join(), function(server, packet, user) {
         let client = server.getClient(user.address);
