@@ -1,5 +1,8 @@
 const fs = require('fs');
 const EventEmitter = require('events');
+const util = require('util');
+
+const readfile = util.promisify(fs.readFile);
 
 const LUZ = require('./LU/Level/luz');
 const BitStream = require('node-raknet/BitStream');
@@ -19,14 +22,17 @@ const SkillManager = require('./LU/Managers/ReplicaManagers/SkillManager');
 const SoundAmbient2DManager = require('./LU/Managers/ReplicaManagers/SoundAmbient2DManager');
 const Unknown107Manager = require('./LU/Managers/ReplicaManagers/Unknown107Manager');
 
+
+/**
+ * A server instance
+ */
 class Server {
     /**
      *
-     * @param {RakServer} rakserver
-     * @param {Number} zoneID
-     * @param Function callback
+     * @param {RakServer} rakserver The rakserver instance to attach to this server
+     * @param {Number} zoneID the zone ID of the zone you want to load
      */
-    constructor(rakserver, zoneID, callback) {
+    constructor(rakserver, zoneID) {
         this._rakserver = rakserver;
         this._rakserver.userMessageHandler = new EventEmitter();
         this._zoneID = zoneID;
@@ -57,29 +63,58 @@ class Server {
         this._manager.attachManager('unknown-127', new Unknown107Manager(this));
     }
 
+    /**
+     * Returns the rakserver instance associated to this server
+     * @return {RakServer}
+     */
     get rakServer() {
         return this._rakserver;
     }
 
+    /**
+     * Returns the event bus for this server
+     * @return {EventEmitter}
+     */
     get eventBus() {
         return this._rakserver.userMessageHandler;
     }
 
+    /**
+     * Returns the zone ID associated with this server
+     * @return {Number}
+     */
     get zoneID() {
         return this._zoneID;
     }
 
+    /**
+     * Returns the root Manager of this server
+     * @return {Manager}
+     */
     get manager() {
         return this._manager;
     }
 
+    /**
+     * Returns the LUZ of this server
+     * @return {LUZ}
+     */
     get luz() {
         return this._luz;
     }
 
-    loadLUZ(zoneID) {
+    /**
+     * Loads an LUZ file given a zone ID
+     * @private
+     * @param {Number} zoneID
+     * @return {Promise<>}
+     */
+    #loadLUZ(zoneID) {
+        let server = this;
         return ZoneTable.findByPk(zoneID).then(zone => {
-            this._luz = new LUZ(new BitStream(fs.readFileSync(maps + zone.zoneName)));
+            return readfile(maps + zone.zoneName);
+        }).then((file) => {
+            server._luz = new LUZ(new BitStream(file));
         });
     }
 

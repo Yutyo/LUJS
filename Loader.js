@@ -3,7 +3,7 @@ const Server = require('./Server');
 const Log = require('./Log');
 const fs = require('fs');
 const path = require('path');
-const Sequelize = require('sequelize');
+const {Sequelize} = require('sequelize');
 const util = require('util');
 
 const readdir = util.promisify(fs.readdir);
@@ -87,7 +87,7 @@ class Loader {
         }
 
         // Set up connection information
-        global.sequelize = new Sequelize('lujs', null, null, {
+        let sequelize = new Sequelize('lujs', null, null, {
             dialect: config.database.type,
             operatorsAliases: false,
             storage: config.database.connection,
@@ -101,7 +101,9 @@ class Loader {
 
             // Load up models
             let modelsPath = path.join(__dirname, config.database.models);
-            fs.readdirSync(modelsPath).forEach(function(file) {
+            return readdir(modelsPath)
+        }).then((files) => {
+            files.forEach(function(file) {
                 global[file.split('.')[0]] = (require(config.database.models + file));
             });
         });
