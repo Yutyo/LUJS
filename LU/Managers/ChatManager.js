@@ -89,8 +89,6 @@ class ChatManager extends GenericManager {
                 effectID: 0xA7
             }).serialize(stream);
 
-            console.log(stream.toBinaryString());
-
             client.send(stream, Reliability.RELIABLE);
         }
     }

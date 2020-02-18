@@ -8,7 +8,6 @@ const util = require('util');
 
 const readdir = util.promisify(fs.readdir);
 
-
 const PluginLoader = require('./PluginLoader');
 
 let config;
@@ -113,7 +112,7 @@ class Loader {
 
     static setupCDClient() {
         // Set up connection information
-        global.CDClient = new Sequelize('cdclient', null, null, {
+        /*global.CDClient = new Sequelize('cdclient', null, null, {
             dialect: config.cdclient.type,
             operatorsAliases: false,
             storage: config.cdclient.connection,
@@ -131,7 +130,8 @@ class Loader {
             fs.readdirSync(modelsPath).forEach(function(file) {
                 global[file.split('.')[0]] = (require(config.cdclient.models + file));
             });
-        });
+        });*/
+        return new Promise((resolve) => {resolve()});
     }
 }
 

@@ -10,6 +10,7 @@ if(!fs.existsSync('config.json')) {
 }
 const config = JSON.parse(fs.readFileSync('config.json'));
 global.database = config.database;
+global.cdclient = config.cdclient;
 
 const Loader = require('./Loader');
 Loader.setup(config);

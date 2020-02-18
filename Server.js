@@ -22,6 +22,7 @@ const SkillManager = require('./LU/Managers/ReplicaManagers/SkillManager');
 const SoundAmbient2DManager = require('./LU/Managers/ReplicaManagers/SoundAmbient2DManager');
 const Unknown107Manager = require('./LU/Managers/ReplicaManagers/Unknown107Manager');
 
+const {ZoneTable} = require('./DB/CDClient');
 
 /**
  * A server instance

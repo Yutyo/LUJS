@@ -16,6 +16,7 @@ sequelize.authenticate().then(function(err) {
     console.log("Connected to the LUJS database");
 });
 
+// import models
 models.Ban = require('./Models/Ban')(sequelize);
 models.Character = require('./Models/Character')(sequelize);
 models.HardwareSurvey = require('./Models/HardwareSurvey')(sequelize);
@@ -23,6 +24,7 @@ models.InventoryItem = require('./Models/InventoryItem')(sequelize);
 models.Session = require('./Models/Session')(sequelize);
 models.User = require('./Models/User')(sequelize);
 
+// relationships
 models.Character.hasMany(models.InventoryItem, {as: "Items", foreignKey: 'character_id', sourceKey: 'id'});
 
 models.sequelize = sequelize;

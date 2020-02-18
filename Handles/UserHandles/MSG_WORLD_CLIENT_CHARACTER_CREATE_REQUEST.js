@@ -14,6 +14,7 @@ const {MinifigCreateResponse, CreationResponse} = require('../../LU/Messages/Min
 const Sequelize = require('sequelize');
 
 const {Character, InventoryItem} = require('../../DB/LUJS');
+const {ComponentsRegistry, ItemComponent} = require('../../DB/CDClient');
 
 function MSG_WORLD_CLIENT_CHARACTER_CREATE_REQUEST(handler) {
     handler.on([LURemoteConnectionType.server, LUServerMessageType.MSG_WORLD_CLIENT_CHARACTER_CREATE_REQUEST].join(), function(server, packet, user) {
