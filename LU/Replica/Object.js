@@ -3,6 +3,8 @@ const Components = require('./Components');
 const SerializationType = require('./SerializationType');
 const EventEmitter = require('events').EventEmitter;
 
+const {ComponentsRegistry} = require('../../DB/CDClient');
+
 class GameObject {
     /**
      *

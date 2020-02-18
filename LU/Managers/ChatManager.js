@@ -9,6 +9,8 @@ const GameMessageFactory = require('../../LU/GameMessageFactory');
 const GameMessageKey = require('lugamemessages/GameMessages').GameMessageKey;
 const LWOOBJID = require('../../LU/LWOOBJID');
 
+const {Character} = require('../../DB/LUJS');
+
 /**
  * A manager for basic chat functionality
  */
@@ -86,8 +88,6 @@ class ChatManager extends GenericManager {
                 use: true,
                 effectID: 0xA7
             }).serialize(stream);
-
-            console.log(stream.toBinaryString());
 
             client.send(stream, Reliability.RELIABLE);
         }

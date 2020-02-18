@@ -3,11 +3,10 @@ const Server = require('./Server');
 const Log = require('./Log');
 const fs = require('fs');
 const path = require('path');
-const Sequelize = require('sequelize');
+const {Sequelize} = require('sequelize');
 const util = require('util');
 
 const readdir = util.promisify(fs.readdir);
-
 
 const PluginLoader = require('./PluginLoader');
 
@@ -76,18 +75,18 @@ class Loader {
 
     static setupDatabase() {
         // Setting up ORM
-        global.rebuildDB = config.database.rebuild;
 
-        if(config.database.rebuild) {
+
+        /*if(config.database.rebuild) {
             Log.info('Rebuilding the database');
             config.database.rebuild = false;
             fs.writeFile('config.json', JSON.stringify(config, null, 4), (err) => {
                 if(err) throw err;
             });
-        }
+        }*/
 
         // Set up connection information
-        global.sequelize = new Sequelize('lujs', null, null, {
+        /*let sequelize = new Sequelize('lujs', null, null, {
             dialect: config.database.type,
             operatorsAliases: false,
             storage: config.database.connection,
@@ -101,15 +100,19 @@ class Loader {
 
             // Load up models
             let modelsPath = path.join(__dirname, config.database.models);
-            fs.readdirSync(modelsPath).forEach(function(file) {
+            return readdir(modelsPath)
+        }).then((files) => {
+            files.forEach(function(file) {
                 global[file.split('.')[0]] = (require(config.database.models + file));
             });
-        });
+        });*/
+
+        return new Promise((resolve) => {resolve()});
     }
 
     static setupCDClient() {
         // Set up connection information
-        global.CDClient = new Sequelize('cdclient', null, null, {
+        /*global.CDClient = new Sequelize('cdclient', null, null, {
             dialect: config.cdclient.type,
             operatorsAliases: false,
             storage: config.cdclient.connection,
@@ -127,7 +130,8 @@ class Loader {
             fs.readdirSync(modelsPath).forEach(function(file) {
                 global[file.split('.')[0]] = (require(config.cdclient.models + file));
             });
-        });
+        });*/
+        return new Promise((resolve) => {resolve()});
     }
 }
 
