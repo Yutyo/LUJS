@@ -29,9 +29,11 @@ node_modules
 
 \.idea/
 
-config\.json
+config/local.json
 
 *.sqlite
+
+*.bin
 
 plugins/*
 !plugins/.gitignore

@@ -1,10 +1,11 @@
 const {Sequelize} = require('sequelize');
+const config = require('config');
 
 // Set up connection information
 let sequelize = new Sequelize('cdclient', null, null, {
-    dialect: cdclient.type,
+    dialect: config.get('cdclient.type'),
     operatorsAliases: false,
-    storage: cdclient.connection,
+    storage: config.get('cdclient.connection'),
     logging: false,
 });
 

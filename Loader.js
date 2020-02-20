@@ -1,6 +1,5 @@
 const RakServer = require('node-raknet/RakServer.js');
 const Server = require('./Server');
-const Log = require('./Log');
 const fs = require('fs');
 const path = require('path');
 const {Sequelize} = require('sequelize');
@@ -10,29 +9,22 @@ const readdir = util.promisify(fs.readdir);
 
 const PluginLoader = require('./PluginLoader');
 
-let config;
+const config = require('config');
 
 class Loader {
-    static setup(inConfig) {
-        config = inConfig;
-
-        global.logLevel = config.logLevel;
-        global.maps = config.mapsFolder;
+    static setup() {
 
         let loader = this;
-
-
-
 
         this.setupDatabase().then(() => {
             return loader.setupCDClient()
         }).then(() => {
-            let normalizedPath = path.join(__dirname, config.handlers);
+            let normalizedPath = path.join(__dirname, config.get('handlers'));
             return readdir(normalizedPath)
         }).then((files) => {
             let handles = [];
             files.forEach(function(file) {
-                handles.push(require(config.handlers + file));
+                handles.push(require(config.get('handlers') + file));
             });
 
             loader.startServersFromConfig(handles);
@@ -80,7 +72,7 @@ class Loader {
         /*if(config.database.rebuild) {
             Log.info('Rebuilding the database');
             config.database.rebuild = false;
-            fs.writeFile('config.json', JSON.stringify(config, null, 4), (err) => {
+            fs.writeFile('local.json', JSON.stringify(config, null, 4), (err) => {
                 if(err) throw err;
             });
         }*/
