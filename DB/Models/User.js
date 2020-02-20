@@ -1,5 +1,4 @@
 const Sequelize = require('sequelize');
-const Log = require('../../Log');
 
 module.exports = sequelize => {
     return sequelize.define('user', {

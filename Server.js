@@ -1,8 +1,9 @@
 const fs = require('fs');
 const EventEmitter = require('events');
 const util = require('util');
+const config = require('config');
 
-const readfile = util.promisify(fs.readFile);
+const readFile = util.promisify(fs.readFile);
 
 const LUZ = require('./LU/Level/luz');
 const BitStream = require('node-raknet/BitStream');
@@ -113,7 +114,7 @@ class Server {
     loadLUZ(zoneID) {
         let server = this;
         return ZoneTable.findByPk(zoneID).then(zone => {
-            return readfile(maps + zone.zoneName);
+            return readFile(config.get('mapsFolder') + zone.zoneName);
         }).then((file) => {
             server._luz = new LUZ(new BitStream(file));
         });

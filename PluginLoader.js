@@ -3,7 +3,6 @@ const md5file = require('md5-file');
 const unzip = require('extract-zip');
 const pathlib = require('path');
 const util = require('util');
-const Log = require('./Log');
 
 class PluginLoader {
     constructor() {
@@ -50,7 +49,7 @@ class PluginLoader {
                 servers.forEach((server) => {
                     plugin.plugin.register(server);
                 });
-                Log.debug(`Registered ${this.getUniformName(plugin.info.name)}`);
+                console.log(`Registered ${this.getUniformName(plugin.info.name)}`);
             });
         });
     }

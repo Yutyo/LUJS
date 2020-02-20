@@ -10,7 +10,6 @@ const LUAuthenticationMessageType = require('../../LU/Message Types/LUAuthentica
 const LUChatMessageType = require('../../LU/Message Types/LUChatMessageType');
 const LUServerMessageType = require('../../LU/Message Types/LUServerMessageType');
 const LUClientMessageType = require('../../LU/Message Types/LUClientMessageType');
-const Log = require('../../Log');
 
 /**
  *
@@ -53,7 +52,7 @@ function ID_USER_PACKET_ENUM(server) {
                     break;
 
             }
-            Log.debug(`No listeners found for: ${[LURemoteConnectionType.key(remoteConnectionType),string].join(', ')}`);
+            console.log(`No listeners found for: ${[LURemoteConnectionType.key(remoteConnectionType),string].join(', ')}`);
         }
 
         let string = "";

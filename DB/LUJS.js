@@ -1,10 +1,11 @@
 const {Sequelize} = require('sequelize');
+const config = require('config');
 
 // Set up connection information
 let sequelize = new Sequelize('lujs', null, null, {
-    dialect: database.type,
+    dialect: config.get('database.type'),
     operatorsAliases: false,
-    storage: database.connection,
+    storage: config.get('database.connection'),
     logging: false,
 });
 
