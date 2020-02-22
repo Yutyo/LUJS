@@ -6,7 +6,7 @@ const LUServerMessageType = require('../../LU/Message Types/LUServerMessageType'
 const LUClientMessageType = require('../../LU/Message Types/LUClientMessageType');
 const TransferToWorld = require('../../LU/Messages/TransferToWorld');
 const LWOOBJID = require('../../LU/LWOOBJID');
-
+const {ServerManager} = require('../../ServerManager');
 const {Character} = require('../../DB/LUJS');
 
 function MSG_WORLD_CLIENT_LOGIN_REQUEST(handler) {
@@ -28,8 +28,8 @@ function MSG_WORLD_CLIENT_LOGIN_REQUEST(handler) {
                 character.zone = 1000;
             }
 
-            servers.findZone(character.zone).then((servers) => {
-                let zone = servers[0];
+            ServerManager.request(character.zone).then((server) => {
+                let zone = server;
                 character.x = zone.luz.spawnX;
                 character.y = zone.luz.spawnY;
                 character.z = zone.luz.spawnZ;

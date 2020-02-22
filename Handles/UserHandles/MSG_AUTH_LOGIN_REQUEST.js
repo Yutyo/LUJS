@@ -11,6 +11,7 @@ const {ReliabilityLayer, Reliability} = require('node-raknet/ReliabilityLayer.js
 const {LoginInfo, LoginCodes} = require('../../LU/Messages/LoginInfo');
 const bcrypt = require('bcryptjs');
 const {Session, User} = require('../../DB/LUJS');
+const {ServerManager} = require('../../ServerManager');
 
 function rand(size) {
     let chars = "abcdefghijklmnopqrstuvwxyz1234567890";
@@ -61,8 +62,8 @@ function MSG_AUTH_LOGIN_REQUEST(handler) {
                     response.code = LoginCodes.success;
 
                     // Find the world server acting as the char server
-                    servers.findZone(0).then((servers) => {
-                        let redirect = servers[0];
+                    ServerManager.request(0).then((server) => {
+                        let redirect = server;
                         response.redirectIP = redirect.rakServer.ip;
                         response.redirectPort = redirect.rakServer.port;
                         response.chatIP = redirect.rakServer.ip;
