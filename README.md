@@ -1,5 +1,6 @@
 # LUJS
 ### A simple Node server project for emulating LEGO Universe servers
+[![Build Status](http://jenkins.rainebannister.me:8080/job/LUJS/job/master/badge/icon?style=flat-square)](http://jenkins.rainebannister.me:8080/job/LUJS/job/master)
 
 ## Easy
 
