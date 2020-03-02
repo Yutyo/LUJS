@@ -1,5 +1,6 @@
 const RakServer = require('node-raknet/RakServer.js');
 const Server = require('./Server');
+const {ServerManager} = require('./ServerManager');
 const fs = require('fs');
 const path = require('path');
 const {Sequelize} = require('sequelize');
@@ -16,12 +17,8 @@ class Loader {
 
         let loader = this;
 
-        this.setupDatabase().then(() => {
-            return loader.setupCDClient()
-        }).then(() => {
-            let normalizedPath = path.join(__dirname, config.get('handlers'));
-            return readdir(normalizedPath)
-        }).then((files) => {
+        let normalizedPath = path.join(__dirname, config.get('handlers'));
+        readdir(normalizedPath).then((files) => {
             let handles = [];
             files.forEach(function(file) {
                 handles.push(require(config.get('handlers') + file));
@@ -34,96 +31,9 @@ class Loader {
     }
 
     static startServersFromConfig(handles) {
-        // Load servers from config file...
-        global.servers = [];
-        global.serverPort = 3000;
-
-        config.servers.forEach(function(server) {
-            let rakServer = new RakServer(server.ip, server.port, server.password);
-
-            rakServer.server.on('listening', () => {
-                handles.forEach(function(handle) {
-                    handle(rakServer);
-                });
-            });
-
-            global.servers.push(new Server(rakServer, server.zone));
+        config.get('servers').forEach(function(server) {
+            ServerManager.startServer(server.ip, server.port, server.password, server.zone);
         });
-
-        // Add method to find zone to this server list
-        global.servers.findZone = function(zoneID) {
-            return new Promise((resolve, reject) => {
-                let ret = [];
-                global.servers.forEach(function(server) {
-                    if(server.zoneID === zoneID) {
-                        ret.push(server);
-                    }
-                });
-
-                resolve(ret);
-            });
-        };
-    }
-
-    static setupDatabase() {
-        // Setting up ORM
-
-
-        /*if(config.database.rebuild) {
-            Log.info('Rebuilding the database');
-            config.database.rebuild = false;
-            fs.writeFile('local.json', JSON.stringify(config, null, 4), (err) => {
-                if(err) throw err;
-            });
-        }*/
-
-        // Set up connection information
-        /*let sequelize = new Sequelize('lujs', null, null, {
-            dialect: config.database.type,
-            operatorsAliases: false,
-            storage: config.database.connection,
-            logging: false,
-        });
-
-        // Test connection
-        return sequelize.authenticate().then(function(err) {
-            if(err) throw 'Unable to connect to the database:' + err;
-            Log.info('Connected to LUJS DB');
-
-            // Load up models
-            let modelsPath = path.join(__dirname, config.database.models);
-            return readdir(modelsPath)
-        }).then((files) => {
-            files.forEach(function(file) {
-                global[file.split('.')[0]] = (require(config.database.models + file));
-            });
-        });*/
-
-        return new Promise((resolve) => {resolve()});
-    }
-
-    static setupCDClient() {
-        // Set up connection information
-        /*global.CDClient = new Sequelize('cdclient', null, null, {
-            dialect: config.cdclient.type,
-            operatorsAliases: false,
-            storage: config.cdclient.connection,
-            logging: false,
-        });
-
-        // Test connection
-        return CDClient.authenticate().then(function(err) {
-            if(err) throw 'Unable to connect to the database:' + err;
-
-            Log.info('Connected to CDClient DB');
-
-            // Load up models
-            let modelsPath = path.join(__dirname, config.cdclient.models);
-            fs.readdirSync(modelsPath).forEach(function(file) {
-                global[file.split('.')[0]] = (require(config.cdclient.models + file));
-            });
-        });*/
-        return new Promise((resolve) => {resolve()});
     }
 }
 

@@ -36,16 +36,20 @@ class Server {
      */
     constructor(rakserver, zoneID) {
         this._rakserver = rakserver;
-        this._rakserver.userMessageHandler = new EventEmitter();
+
+        if(this._rakserver.userMessageHandler === undefined) {
+            this._rakserver.userMessageHandler = new EventEmitter();
+        }
+
         this._zoneID = zoneID;
         let server = this;
         this._rakserver.getServer = function() {
             return server;
         };
 
-        if(this.zoneID > 0) {
-            this.loadLUZ(this.zoneID);
-        }
+        //if(this.zoneID > 0) {
+        //    this.loadLUZ(this.zoneID);
+        //}
 
         // Attach managers
         this._manager = new Manager();
@@ -107,7 +111,6 @@ class Server {
 
     /**
      * Loads an LUZ file given a zone ID
-     * @private
      * @param {Number} zoneID
      * @return {Promise<>}
      */

@@ -59,7 +59,7 @@ function MSG_WORLD_CLIENT_LOGIN_REQUEST(handler) {
                     charData.writeLong(cont.length());
                     charData.writeLong(compressedData.length());
                     charData.concat(compressedData);
-                    charData.toFile((Date.now() / 1000 | 0) + "_chardata.bin");
+                    //charData.toFile((Date.now() / 1000 | 0) + "_chardata.bin");
                     return client.send(charData, Reliability.RELIABLE_ORDERED)
             }).then(() => {
                 let lwoobjid = new LWOOBJID(0x1de0b6b5, character.id);
@@ -111,7 +111,7 @@ function MSG_WORLD_CLIENT_LOGIN_REQUEST(handler) {
                 stream.writeShort(object.netID);
                 object.serialize(SerializationType.CREATION, stream);
 
-                stream.toFile((Date.now() / 1000 | 0) + "_[24]_[01-00]_(1).bin");
+                //stream.toFile((Date.now() / 1000 | 0) + "_[24]_[01-00]_(1).bin");
 
                 return client.send(stream, Reliability.RELIABLE).then(() => {return object;});
             }).then((object) => {

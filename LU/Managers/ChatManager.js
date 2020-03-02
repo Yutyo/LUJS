@@ -8,7 +8,7 @@ const RakMessages = require('node-raknet/RakMessages.js');
 const GameMessageFactory = require('../../LU/GameMessageFactory');
 const GameMessageKey = require('lugamemessages/GameMessages').GameMessageKey;
 const LWOOBJID = require('../../LU/LWOOBJID');
-
+const {ServerManager} = require('../../ServerManager');
 const {Character} = require('../../DB/LUJS');
 
 /**
@@ -48,8 +48,8 @@ class ChatManager extends GenericManager {
         // this is to change worlds
         this._commands["testmap"] = (sender, client, args) => {
             Character.findByPk(client.session.character_id).then(character => {
-                servers.findZone(parseInt(args[1])).then((servers) => {
-                    let zone = servers[0];
+                ServerManager.request(parseInt(args[1])).then((server) => {
+                    let zone = server;
 
                     character.x = zone.luz.spawnX;
                     character.y = zone.luz.spawnY;
