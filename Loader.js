@@ -1,10 +1,12 @@
 const RakServer = require('node-raknet/RakServer.js');
 const Server = require('./Server');
-const {ServerManager} = require('./ServerManager');
+const {servers, ServerManager} = require('./ServerManager');
 const fs = require('fs');
 const path = require('path');
 const {Sequelize} = require('sequelize');
 const util = require('util');
+
+const Commands = require('./Commands');
 
 const readdir = util.promisify(fs.readdir);
 
@@ -26,7 +28,8 @@ class Loader {
 
             loader.startServersFromConfig(handles);
         }).then(() => {
-            return PluginLoader.load(config, global.servers);
+            Commands.instance();
+            return PluginLoader.load(config, servers);
         });
     }
 
