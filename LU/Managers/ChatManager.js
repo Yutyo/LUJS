@@ -77,6 +77,9 @@ class ChatManager extends GenericManager {
         };
 
         this._commands["fly"] = (sender, client, args) => {
+            if(client.fly === undefined) client.fly = false;
+            client.fly = !client.fly;
+
             let stream = new BitStream();
             stream.writeByte(RakMessages.ID_USER_PACKET_ENUM);
             stream.writeShort(LURemoteConnectionType.client);
@@ -85,7 +88,7 @@ class ChatManager extends GenericManager {
             new LWOOBJID(0x1de0b6b5, client.session.character_id).serialize(stream);
             GameMessageFactory.makeMessage(GameMessageKey.setJetPackMode, {
                 bypassChecks: true,
-                use: true,
+                use: client.fly,
                 effectID: 0xA7
             }).serialize(stream);
 
