@@ -37,3 +37,7 @@ config/local.json
 
 plugins/*
 !plugins/.gitignore
+
+*.psd
+*.ai
+res/logo_full_res.png
