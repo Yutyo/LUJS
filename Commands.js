@@ -2,6 +2,7 @@ const readline = require('readline');
 const User = require('./DB/LUJS').User;
 const bcrypt = require('bcryptjs');
 const {servers} = require('./ServerManager');
+const sequelize = require('./DB/LUJS').sequelize;
 
 let instance;
 
@@ -65,12 +66,15 @@ class Commands {
                         console.log(`Created user: ${args[0]} ${hash}`);
                     });
                 });
-            break;
+                break;
             case 'list-servers':
                 servers.forEach((server) => {
                     console.log(`Server: ${server.rakServer.ip}:${server.rakServer.port} Zone: ${server.zoneID}`);
                 });
-            break;
+                break;
+            case 'rebuild-database':
+                sequelize.sync({force: true});
+                break;
         }
     }
 
