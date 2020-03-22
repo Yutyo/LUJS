@@ -69,6 +69,14 @@ class Server {
         this._manager.attachManager('unknown-127', new Unknown107Manager(this));
     }
 
+    close() {
+        return new Promise((resolve, reject) => {
+            this.rakServer.server.close(() => {
+                resolve();
+            })
+        });
+    }
+
     /**
      * Returns the rakserver instance associated to this server
      * @return {RakServer}
