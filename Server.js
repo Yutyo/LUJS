@@ -69,6 +69,10 @@ class Server {
         this._manager.attachManager('unknown-127', new Unknown107Manager(this));
     }
 
+    /**
+     * Closes this server
+     * @returns {Promise<>}
+     */
     close() {
         return new Promise((resolve, reject) => {
             this.rakServer.server.close(() => {
