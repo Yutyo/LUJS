@@ -70,6 +70,18 @@ class Server {
     }
 
     /**
+     * Closes this server
+     * @returns {Promise<>}
+     */
+    close() {
+        return new Promise((resolve, reject) => {
+            this.rakServer.server.close(() => {
+                resolve();
+            })
+        });
+    }
+
+    /**
      * Returns the rakserver instance associated to this server
      * @return {RakServer}
      */

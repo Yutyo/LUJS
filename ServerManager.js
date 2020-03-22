@@ -80,7 +80,16 @@ class ServerManager {
      * @param {Server} server
      */
     static remove(server) {
-        //TODO
+        let index = -1;
+        servers.forEach((server_, i) => {
+            if(server_.rakServer.port === server.rakServer.port) {
+                index = i;
+            }
+        });
+
+        servers[index].close().then(() => {
+            servers.splice(index);
+        });
     }
 
     /**
