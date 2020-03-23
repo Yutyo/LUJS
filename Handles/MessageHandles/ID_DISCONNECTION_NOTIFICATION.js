@@ -14,7 +14,10 @@ const config = require('config');
  */
 function ID_DISCONNECTION_NOTIFICATION(server) {
     server.on(String(RakMessages.ID_DISCONNECTION_NOTIFICATION), function(packet, user) {
-        console.log(`Client ${user.address} has disconnected`);
+        console.log(`Client ${user.address} has disconnected from ${server.ip}:${server.port}`);
+
+        server.userMessageHandler.removeAllListeners(`user-authenticated-${user.address}-${user.port}`);
+
         // TODO: Save users info from memory to DB here...
 
         let servers = [];
