@@ -20,7 +20,7 @@ function MSG_WORLD_CLIENT_CHARACTER_LIST_REQUEST(handler) {
 
         let list = function() {
 
-        const Op = Sequelize.Op;
+            const Op = Sequelize.Op;
 
             Character.findAll({
                 where: {
@@ -82,10 +82,6 @@ function MSG_WORLD_CLIENT_CHARACTER_LIST_REQUEST(handler) {
                 });
             });
         };
-
-        // TODO: Make a custom event bus on each server... this would be a great application for a user being given a session
-        // TODO: Or just use this user event bus... Although I wonder how it would deal with more internal traffic
-        //TODO: Further thought... What about an event bus per user?
 
         handler.on(`user-authenticated-${user.address}-${user.port}`, list);
         //setTimeout(list, 1000); // This is to ensure that the user ID is loaded... Should be a better way of doing this, surely...
