@@ -32,10 +32,15 @@ class Server {
     /**
      *
      * @param {RakServer} rakserver The rakserver instance to attach to this server
+     * @param {String} ip
+     * @param {Number} port
      * @param {Number} zoneID the zone ID of the zone you want to load
      */
-    constructor(rakserver, zoneID) {
+    constructor(rakserver, ip, port, zoneID) {
         this._rakserver = rakserver;
+
+        this._ip = ip;
+        this._port = port;
 
         if(this._rakserver.userMessageHandler === undefined) {
             this._rakserver.userMessageHandler = new EventEmitter();
@@ -87,6 +92,22 @@ class Server {
      */
     get rakServer() {
         return this._rakserver;
+    }
+
+    /**
+     * Returns the IP of this server to redirect to
+     * @returns {String}
+     */
+    get ip() {
+       return this._ip;
+    }
+
+    /**
+     * Returns this port of this server to redirect to
+     * @returns {Number}
+     */
+    get port() {
+        return this._port;
     }
 
     /**
