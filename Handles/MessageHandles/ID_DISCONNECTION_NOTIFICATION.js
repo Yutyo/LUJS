@@ -14,7 +14,7 @@ const config = require('config');
  */
 function ID_DISCONNECTION_NOTIFICATION(server) {
     server.on(String(RakMessages.ID_DISCONNECTION_NOTIFICATION), function(packet, user) {
-        console.log(`Client ${user.address} has disconnected from ${server.ip}:${server.port}`);
+        console.log(`Client ${user.address} has disconnected from ${server.getServer().ip}:${server.port}`);
 
         server.userMessageHandler.removeAllListeners(`user-authenticated-${user.address}-${user.port}`);
 

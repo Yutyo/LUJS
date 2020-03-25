@@ -61,8 +61,8 @@ class ChatManager extends GenericManager {
                     character.save();
 
                     let response = new TransferToWorld();
-                    response.ip = zone.rakServer.ip;
-                    response.port = zone.rakServer.port;
+                    response.ip = zone.ip;
+                    response.port = zone.port;
                     response.mythranShift = false;
 
                     let send = new BitStream();
