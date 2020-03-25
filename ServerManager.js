@@ -107,7 +107,7 @@ class ServerManager {
             }
 
             // or start one
-            this.startServer(ip, currentPort, password, zoneID).then((server) => {
+            this.startServer("0.0.0.0", currentPort, password, zoneID).then((server) => {
                 resolve(server);
                 currentPort++;
             });
