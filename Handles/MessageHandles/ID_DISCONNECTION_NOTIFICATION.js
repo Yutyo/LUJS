@@ -5,6 +5,8 @@
 const RakMessages = require('node-raknet/RakMessages.js');
 const BitStream = require('node-raknet/BitStream.js');
 const {ReliabilityLayer, Reliability} = require('node-raknet/ReliabilityLayer.js');
+const {ServerManager} = require('../../ServerManager');
+const config = require('config');
 
 /**
  *
@@ -12,8 +14,25 @@ const {ReliabilityLayer, Reliability} = require('node-raknet/ReliabilityLayer.js
  */
 function ID_DISCONNECTION_NOTIFICATION(server) {
     server.on(String(RakMessages.ID_DISCONNECTION_NOTIFICATION), function(packet, user) {
-        console.log(`Client ${user.address} has disconnected`);
+        console.log(`Client ${user.address} has disconnected from ${server.getServer().ip}:${server.port}`);
+
+        server.userMessageHandler.removeAllListeners(`user-authenticated-${user.address}-${user.port}`);
+
         // TODO: Save users info from memory to DB here...
+
+        let servers = [];
+        config.servers.forEach((server_) => {
+            servers.push(server_.port);
+        });
+
+        if(server.connections.length === 0 && !servers.includes(server.port)) {
+            // if the server is now empty
+            server.timeout = setTimeout(() => {
+                console.log(`Closing server ${server.port}`);
+
+                ServerManager.remove(server.getServer());
+            }, config.timeout);
+        }
     });
 }
 

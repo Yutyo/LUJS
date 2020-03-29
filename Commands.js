@@ -1,6 +1,8 @@
 const readline = require('readline');
 const User = require('./DB/LUJS').User;
 const bcrypt = require('bcryptjs');
+const {servers} = require('./ServerManager');
+const sequelize = require('./DB/LUJS').sequelize;
 
 let instance;
 
@@ -51,7 +53,7 @@ class Commands {
      */
     handleCommand(command, args) {
         switch (command) {
-            case 'create-account': {
+            case 'create-account':
                 bcrypt.hash(args[1], 10, function(err, hash) {
                     User.create({
                         username: args[0],
@@ -64,8 +66,15 @@ class Commands {
                         console.log(`Created user: ${args[0]} ${hash}`);
                     });
                 });
-
-            }
+                break;
+            case 'list-servers':
+                servers.forEach((server) => {
+                    console.log(`Server: ${server.rakServer.ip}:${server.rakServer.port} Zone: ${server.zoneID}`);
+                });
+                break;
+            case 'rebuild-database':
+                sequelize.sync({force: true});
+                break;
         }
     }
 

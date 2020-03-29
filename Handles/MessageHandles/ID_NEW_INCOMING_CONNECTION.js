@@ -10,7 +10,10 @@ const RakMessages = require('node-raknet/RakMessages.js');
  */
 function ID_NEW_INCOMING_CONNECTION(server) {
     server.on(String(RakMessages.ID_NEW_INCOMING_CONNECTION), function(packet, user) {
-        console.log(`Got new connection from ${user.address}`);
+        console.log(`Got new connection from ${user.address} for ${server.getServer().ip}:${server.port}`);
+
+        // prevent the server from shutting down
+        clearTimeout(server.timeout);
     });
 }
 

@@ -64,11 +64,11 @@ function MSG_AUTH_LOGIN_REQUEST(handler) {
                     // Find the world server acting as the char server
                     ServerManager.request(0).then((server) => {
                         let redirect = server;
-                        response.redirectIP = redirect.rakServer.ip;
-                        response.redirectPort = redirect.rakServer.port;
-                        response.chatIP = redirect.rakServer.ip;
-                        response.chatPort = redirect.rakServer.port;
-                        response.altIP = redirect.rakServer.ip;
+                        response.redirectIP = redirect.ip;
+                        response.redirectPort = redirect.port;
+                        response.chatIP = redirect.ip;
+                        response.chatPort = redirect.port;
+                        response.altIP = redirect.ip;
 
                         //Session stuff.
                         // TODO: Check if the user already has a login from this ip, if so kill that session (and log out the other user logged in at some point)

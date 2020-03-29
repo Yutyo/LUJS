@@ -18,7 +18,7 @@ let servers = [];
 const startPort = 3000;
 const poolSize = 5;
 let currentPort = startPort;
-const ip = "127.0.0.1";
+const ip = config.globalIP;
 const password = "3.25 ND";
 
 class ServerManager {
@@ -50,7 +50,7 @@ class ServerManager {
 
                 return handles;
             }).then(handles => {
-                let rakServer = new RakServer(ip, port, password);
+                let rakServer = new RakServer("0.0.0.0", port, password);
 
                 rakServer.userMessageHandler = new EventEmitter();
 
@@ -61,7 +61,7 @@ class ServerManager {
                 });
 
                 const ServerClass = require('./Server');
-                let server = new ServerClass(rakServer, zoneID);
+                let server = new ServerClass(rakServer, ip, port, zoneID);
                 ServerManager.add(server);
 
                 if(zoneID > 0) {
@@ -80,7 +80,16 @@ class ServerManager {
      * @param {Server} server
      */
     static remove(server) {
-        //TODO
+        let index = -1;
+        servers.forEach((server_, i) => {
+            if(server_.rakServer.port === server.rakServer.port) {
+                index = i;
+            }
+        });
+
+        servers[index].close().then(() => {
+            servers.splice(index);
+        });
     }
 
     /**
