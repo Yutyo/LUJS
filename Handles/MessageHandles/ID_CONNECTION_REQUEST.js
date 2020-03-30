@@ -4,44 +4,44 @@
  */
 const RakMessages = require('node-raknet/RakMessages.js');
 const BitStream = require('node-raknet/BitStream.js');
-const inet_aton = require('inet-aton');
-const {ReliabilityLayer, Reliability} = require('node-raknet/ReliabilityLayer.js');
+const inetAton = require('inet-aton');
+const { Reliability } = require('node-raknet/ReliabilityLayer.js');
 
 /**
  *
  * @param {RakServer} server
  */
-function ID_CONNECTION_REQUEST(server) {
-    server.on(String(RakMessages.ID_CONNECTION_REQUEST), function(packet, user) {
-        let client = this.getClient(user.address);
-        let password = "";
-        while(!packet.allRead()) {
-            password += String.fromCharCode(packet.readByte());
-        }
+function ID_CONNECTION_REQUEST (server) {
+  server.on(String(RakMessages.ID_CONNECTION_REQUEST), function (packet, user) {
+    const client = this.getClient(user.address);
+    let password = '';
+    while (!packet.allRead()) {
+      password += String.fromCharCode(packet.readByte());
+    }
 
-        if(password === this.password) {
-            let response = new BitStream();
-            response.writeByte(RakMessages.ID_CONNECTION_REQUEST_ACCEPTED);
+    if (password === this.password) {
+      const response = new BitStream();
+      response.writeByte(RakMessages.ID_CONNECTION_REQUEST_ACCEPTED);
 
-            let remoteAddress = inet_aton(user.address);
-            response.writeByte(remoteAddress[0]);
-            response.writeByte(remoteAddress[1]);
-            response.writeByte(remoteAddress[2]);
-            response.writeByte(remoteAddress[3]);
+      const remoteAddress = inetAton(user.address);
+      response.writeByte(remoteAddress[0]);
+      response.writeByte(remoteAddress[1]);
+      response.writeByte(remoteAddress[2]);
+      response.writeByte(remoteAddress[3]);
 
-            response.writeShort(user.port);
-            response.writeShort(0);
+      response.writeShort(user.port);
+      response.writeShort(0);
 
-            let localAddress = inet_aton(this.ip);
-            response.writeByte(localAddress[0]);
-            response.writeByte(localAddress[1]);
-            response.writeByte(localAddress[2]);
-            response.writeByte(localAddress[3]);
+      const localAddress = inetAton(this.ip);
+      response.writeByte(localAddress[0]);
+      response.writeByte(localAddress[1]);
+      response.writeByte(localAddress[2]);
+      response.writeByte(localAddress[3]);
 
-            response.writeShort(this.server.address().port);
-            client.send(response, Reliability.RELIABLE);
-        }
-    });
+      response.writeShort(this.server.address().port);
+      client.send(response, Reliability.RELIABLE);
+    }
+  });
 }
 
 module.exports = ID_CONNECTION_REQUEST;

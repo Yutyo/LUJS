@@ -7,113 +7,111 @@ const RakServer = require('node-raknet/RakServer.js');
 
 const readdir = util.promisify(fs.readdir);
 
-const Server = require('./Server');
-
 /**
  *
  * @type {Server[]}
  */
-let servers = [];
+const servers = [];
 
 const startPort = 3000;
-const poolSize = 5;
+// const poolSize = 5; TODO: use this
 let currentPort = startPort;
 const ip = config.globalIP;
-const password = "3.25 ND";
+const password = '3.25 ND';
 
 class ServerManager {
+  /**
+   *
+   * @param {Server} server
+   */
+  static add (server) {
+    servers.push(server);
+  }
 
-    /**
-     *
-     * @param {Server} server
-     */
-    static add(server) {
-        servers.push(server);
-    }
+  /**
+   *
+   * @param ip
+   * @param port
+   * @param password
+   * @param zoneID
+   * @returns {Promise<Server>}
+   */
+  static startServer (ip, port, password, zoneID) {
+    return new Promise(resolve => {
+      const normalizedPath = path.join(__dirname, config.get('handlers'));
+      readdir(normalizedPath)
+        .then(files => {
+          const handles = [];
+          files.forEach(function (file) {
+            handles.push(require(config.get('handlers') + file));
+          });
 
-    /**
-     *
-     * @param ip
-     * @param port
-     * @param password
-     * @param zoneID
-     * @returns {Promise<Server>}
-     */
-    static startServer(ip, port, password, zoneID) {
-        return new Promise((resolve) => {
-            let normalizedPath = path.join(__dirname, config.get('handlers'));
-            readdir(normalizedPath).then((files) => {
-                let handles = [];
-                files.forEach(function(file) {
-                    handles.push(require(config.get('handlers') + file));
-                });
+          return handles;
+        })
+        .then(handles => {
+          const rakServer = new RakServer('0.0.0.0', port, password);
 
-                return handles;
-            }).then(handles => {
-                let rakServer = new RakServer("0.0.0.0", port, password);
+          rakServer.userMessageHandler = new EventEmitter();
 
-                rakServer.userMessageHandler = new EventEmitter();
-
-                rakServer.server.on('listening', () => {
-                    handles.forEach(function(handle) {
-                        handle(rakServer);
-                    });
-                });
-
-                const ServerClass = require('./Server');
-                let server = new ServerClass(rakServer, ip, port, zoneID);
-                ServerManager.add(server);
-
-                if(zoneID > 0) {
-                    server.loadLUZ(zoneID).then(() =>{
-                        resolve(server);
-                    });
-                } else {
-                    resolve(server);
-                }
+          rakServer.server.on('listening', () => {
+            handles.forEach(function (handle) {
+              handle(rakServer);
             });
-        });
-    }
+          });
 
-    /**
-     *
-     * @param {Server} server
-     */
-    static remove(server) {
-        let index = -1;
-        servers.forEach((server_, i) => {
-            if(server_.rakServer.port === server.rakServer.port) {
-                index = i;
-            }
-        });
+          const ServerClass = require('./Server');
+          const server = new ServerClass(rakServer, ip, port, zoneID);
+          ServerManager.add(server);
 
-        servers[index].close().then(() => {
-            servers.splice(index);
-        });
-    }
-
-    /**
-     * @param {Number} zoneID
-     * @return {Promise<Server>}
-     */
-    static request(zoneID) {
-        return new Promise((resolve, reject) => {
-            // find an existing server
-            for(const server of servers) {
-                if(server.zoneID === zoneID) {
-                    resolve(server);
-                    return;
-                }
-            }
-
-            // or start one
-            this.startServer(ip, currentPort, password, zoneID).then((server) => {
-                resolve(server);
-                currentPort++;
+          if (zoneID > 0) {
+            server.loadLUZ(zoneID).then(() => {
+              resolve(server);
             });
+          } else {
+            resolve(server);
+          }
         });
+    });
+  }
 
-    }
+  /**
+   *
+   * @param {Server} server
+   */
+  static remove (server) {
+    let index = -1;
+    servers.forEach((server_, i) => {
+      if (server_.rakServer.port === server.rakServer.port) {
+        index = i;
+      }
+    });
+
+    servers[index].close().then(() => {
+      servers.splice(index);
+    });
+  }
+
+  /**
+   * @param {Number} zoneID
+   * @return {Promise<Server>}
+   */
+  static request (zoneID) {
+    return new Promise((resolve, reject) => {
+      // find an existing server
+      for (const server of servers) {
+        if (server.zoneID === zoneID) {
+          resolve(server);
+          return;
+        }
+      }
+
+      // or start one
+      this.startServer(ip, currentPort, password, zoneID).then(server => {
+        resolve(server);
+        currentPort++;
+      });
+    });
+  }
 }
 
-module.exports = {servers, ServerManager};
+module.exports = { servers, ServerManager };

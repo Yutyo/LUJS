@@ -9,5 +9,10 @@ pipeline {
         sh 'npm install'
       }
     }
+    stage('Format and Lint Code') {
+      steps {
+        sh 'npm run format'
+      }
+    }
   }
 }

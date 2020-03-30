@@ -7,33 +7,41 @@ const LURemoteConnectionType = require('../../LU/Message Types/LURemoteConnectio
 const LUServerMessageType = require('../../LU/Message Types/LUServerMessageType');
 const LUClientMessageType = require('../../LU/Message Types/LUClientMessageType');
 const BitStream = require('node-raknet/BitStream');
-const {ReliabilityLayer, Reliability} = require('node-raknet/ReliabilityLayer.js');
-const {MinifigDeleteResponse, DeletionResponse} = require('../../LU/Messages/MinifigDeleteResponse');
+const { Reliability } = require('node-raknet/ReliabilityLayer.js');
+const {
+  MinifigDeleteResponse
+} = require('../../LU/Messages/MinifigDeleteResponse');
 
-const {Character} = require('../../DB/LUJS');
+const { Character } = require('../../DB/LUJS');
 
-function MSG_WORLD_CLIENT_CHARACTER_DELETE_REQUEST(handler) {
-    handler.on([LURemoteConnectionType.server, LUServerMessageType.MSG_WORLD_CLIENT_CHARACTER_DELETE_REQUEST].join(), function(server, packet, user) {
-        let client = server.getClient(user.address);
+function MSG_WORLD_CLIENT_CHARACTER_DELETE_REQUEST (handler) {
+  handler.on(
+    [
+      LURemoteConnectionType.server,
+      LUServerMessageType.MSG_WORLD_CLIENT_CHARACTER_DELETE_REQUEST
+    ].join(),
+    function (server, packet, user) {
+      const client = server.getClient(user.address);
 
-        let character_ID = packet.readLongLong();
+      const characterID = packet.readLongLong();
 
-        Character.destroy({
-            where: {
-                id: character_ID,
-            }
-        }).then(function() {
-            let response = new MinifigDeleteResponse();
+      Character.destroy({
+        where: {
+          id: characterID
+        }
+      }).then(function () {
+        const response = new MinifigDeleteResponse();
 
-            let send = new BitStream();
-            send.writeByte(RakMessages.ID_USER_PACKET_ENUM);
-            send.writeShort(LURemoteConnectionType.client);
-            send.writeLong(LUClientMessageType.DELETE_CHARACTER_RESPONSE);
-            send.writeByte(0);
-            response.serialize(send);
-            client.send(send, Reliability.RELIABLE_ORDERED);
-        });
-    });
+        const send = new BitStream();
+        send.writeByte(RakMessages.ID_USER_PACKET_ENUM);
+        send.writeShort(LURemoteConnectionType.client);
+        send.writeLong(LUClientMessageType.DELETE_CHARACTER_RESPONSE);
+        send.writeByte(0);
+        response.serialize(send);
+        client.send(send, Reliability.RELIABLE_ORDERED);
+      });
+    }
+  );
 }
 
 module.exports = MSG_WORLD_CLIENT_CHARACTER_DELETE_REQUEST;
