@@ -11,7 +11,7 @@ pipeline {
     }
     stage('Format and Lint Code') {
       steps {
-        sh 'npm format'
+        sh 'npm run format'
       }
     }
   }
