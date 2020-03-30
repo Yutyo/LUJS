@@ -4,22 +4,22 @@
  */
 const RakMessages = require('node-raknet/RakMessages.js');
 const BitStream = require('node-raknet/BitStream.js');
-const {ReliabilityLayer, Reliability} = require('node-raknet/ReliabilityLayer.js');
+const { Reliability } = require('node-raknet/ReliabilityLayer.js');
 
 /**
  *
  * @param {RakServer} server
  */
-function ID_INTERNAL_PING(server) {
-    server.on(String(RakMessages.ID_INTERNAL_PING), function(packet, user) {
-        let client = this.getClient(user.address);
-        let ping = packet.readLong();
+function ID_INTERNAL_PING (server) {
+  server.on(String(RakMessages.ID_INTERNAL_PING), function (packet, user) {
+    const client = this.getClient(user.address);
+    const ping = packet.readLong();
 
-        let response = new BitStream();
-        response.writeByte(RakMessages.ID_CONNECTED_PONG);
-        response.writeLong(ping);
-        response.writeLong(Date.now() - this.startTime);
-        client.send(response, Reliability.UNRELIABLE);
-    });
+    const response = new BitStream();
+    response.writeByte(RakMessages.ID_CONNECTED_PONG);
+    response.writeLong(ping);
+    response.writeLong(Date.now() - this.startTime);
+    client.send(response, Reliability.UNRELIABLE);
+  });
 }
 module.exports = ID_INTERNAL_PING;

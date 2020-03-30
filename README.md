@@ -1,5 +1,7 @@
 # LUJS
+
 ### A simple Node server project for emulating LEGO Universe servers
+
 [![Build Status](http://jenkins.rainebannister.me:8080/job/LUJS/job/master/badge/icon?style=flat-square)](http://jenkins.rainebannister.me:8080/job/LUJS/job/master)
 
 ## Easy
@@ -14,7 +16,7 @@ I am a busy person with at least one other LEGO Universe project going on, and t
 
 You will need the CDClient.sqlite, which can be found in a couple of places (I will put it up somewhere eventually so it can be included in the project, maybe)
 
-To get it running, download the repository, initialize Node, and it should be almost ready. You will need a maps folder from an extracted client, and to set the mapsFolder config to the path of that folder. The database will be rebuilt on the first run as well. 
+To get it running, download the repository, initialize Node, and it should be almost ready. You will need a maps folder from an extracted client, and to set the mapsFolder config to the path of that folder. The database will be rebuilt on the first run as well.
 
 ## Contributing
 

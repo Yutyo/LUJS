@@ -7,126 +7,140 @@ const LURemoteConnectionType = require('../../LU/Message Types/LURemoteConnectio
 const LUAuthenticationMessageType = require('../../LU/Message Types/LUAuthenticationMessageType');
 const LUClientMessageType = require('../../LU/Message Types/LUClientMessageType');
 const BitStream = require('node-raknet/BitStream');
-const {ReliabilityLayer, Reliability} = require('node-raknet/ReliabilityLayer.js');
-const {LoginInfo, LoginCodes} = require('../../LU/Messages/LoginInfo');
+const { Reliability } = require('node-raknet/ReliabilityLayer.js');
+const { LoginInfo, LoginCodes } = require('../../LU/Messages/LoginInfo');
 const bcrypt = require('bcryptjs');
-const {Session, User} = require('../../DB/LUJS');
-const {ServerManager} = require('../../ServerManager');
+const { Session, User } = require('../../DB/LUJS');
+const { ServerManager } = require('../../ServerManager');
+const util = require('util');
+const bcryptHash = util.promisify(bcrypt.hash);
 
-function rand(size) {
-    let chars = "abcdefghijklmnopqrstuvwxyz1234567890";
-    let ret = "";
-    for(let i = 0; i < size; i ++) {
-        ret += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
+function rand (size) {
+  const chars = 'abcdefghijklmnopqrstuvwxyz1234567890';
+  let ret = '';
+  for (let i = 0; i < size; i++) {
+    ret += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
 
-    return ret;
+  return ret;
 }
 
-function MSG_AUTH_LOGIN_REQUEST(handler) {
-    handler.on([LURemoteConnectionType.authentication, LUAuthenticationMessageType.MSG_AUTH_LOGIN_REQUEST].join(), function(server, packet, user) {
-        let client = server.getClient(user.address);
+function MSG_AUTH_LOGIN_REQUEST (handler) {
+  handler.on(
+    [
+      LURemoteConnectionType.authentication,
+      LUAuthenticationMessageType.MSG_AUTH_LOGIN_REQUEST
+    ].join(),
+    function (server, packet, user) {
+      const client = server.getClient(user.address);
 
-        let username = packet.readWString();
-        let password = packet.readWString(41);
-        let language = packet.readShort();
-        let unknown = packet.readByte();
-        let processInformation = packet.readWString(256);
-        let graphicsInformation = packet.readWString(128);
-        let numberOfProcessors = packet.readLong();
-        let processorType = packet.readShort();
-        let processorLevel = packet.readShort();
-        let unknown2 = packet.readLong();
+      const username = packet.readWString();
+      const password = packet.readWString(41);
+      packet.readShort(); // language
+      packet.readByte(); // unknown
+      packet.readWString(256); // process information
+      packet.readWString(128); // graphics information
+      packet.readLong(); // number of processors
+      packet.readShort(); // processor type
+      packet.readShort(); // processor level
+      packet.readLong(); // unknown 2
 
-        if(!packet.allRead()) {
-            let osMajorVersion = packet.readLong();
-            let osMinorVersion = packet.readLong();
-            let osBuildNumber = packet.readLong();
-            let osPlatformID = packet.readLong();
+      if (!packet.allRead()) {
+        packet.readLong(); // os major
+        packet.readLong(); // os minor
+        packet.readLong(); // os build
+        packet.readLong(); // os platform
+      }
+
+      User.findOne({
+        where: { username: username }
+      }).then(userModel => {
+        const response = new LoginInfo();
+
+        if (userModel === null) {
+          // The user was not found
+          response.code = LoginCodes.badUsername;
+        } else {
+          // This is how to generate passwords..
+          bcryptHash(password, 10)
+            .then(hash => {
+              console.log(hash);
+            })
+            .then(() => {
+              console.error('Failed to generate password hash');
+            });
+
+          // TODO: make this async... smh
+          if (bcrypt.compareSync(password, userModel.password)) {
+            response.code = LoginCodes.success;
+
+            // Find the world server acting as the char server
+            ServerManager.request(0).then(server => {
+              const redirect = server;
+              response.redirectIP = redirect.ip;
+              response.redirectPort = redirect.port;
+              response.chatIP = redirect.ip;
+              response.chatPort = redirect.port;
+              response.altIP = redirect.ip;
+
+              // Session stuff.
+              // TODO: Check if the user already has a login from this ip, if so kill that session (and log out the other user logged in at some point)
+              // TODO: Check to see if there is already an existing session for this user, if so, use it
+              // TODO: Actually store this in the DB
+              response.session = rand(32);
+              const today = new Date();
+
+              Session.create({
+                key: response.session,
+                start_time: today,
+                end_time: new Date(today.getTime() + 24 * 60 * 60 * 1000),
+                ip: user.address,
+                user_id: userModel.id
+              });
+
+              response.clientVersionMajor = 1;
+              response.clientVersionCurrent = 10;
+              response.clientVersionMinor = 64;
+              response.localization = 'US';
+              // TODO: Actually get this from the DB
+              response.firstSubscription = false;
+              // TODO: Actually get this from the DB
+              response.freeToPlay = false;
+
+              const send = new BitStream();
+              send.writeByte(RakMessages.ID_USER_PACKET_ENUM);
+              send.writeShort(LURemoteConnectionType.client);
+              send.writeLong(LUClientMessageType.LOGIN_RESPONSE);
+              send.writeByte(0);
+              response.serialize(send);
+              client.send(send, Reliability.RELIABLE_ORDERED);
+            });
+
+            return;
+          } else {
+            response.code = LoginCodes.badPassword;
+          }
         }
 
-        User.findOne({
-            where: {username: username},
-        }).then(userModel => {
-            let response = new LoginInfo();
+        response.clientVersionMajor = 1;
+        response.clientVersionCurrent = 10;
+        response.clientVersionMinor = 64;
+        response.localization = 'US';
+        // TODO: Actually get this from the DB
+        response.firstSubscription = false;
+        // TODO: Actually get this from the DB
+        response.freeToPlay = false;
 
-            if(userModel === null) {
-                // The user was not found
-                response.code = LoginCodes.badUsername;
-            } else {
-
-                // This is how to generate passwords..
-                bcrypt.hash(password, 10, function(err, hash) {console.log(hash)});
-
-                if(bcrypt.compareSync(password, userModel.password)) {
-                    response.code = LoginCodes.success;
-
-                    // Find the world server acting as the char server
-                    ServerManager.request(0).then((server) => {
-                        let redirect = server;
-                        response.redirectIP = redirect.ip;
-                        response.redirectPort = redirect.port;
-                        response.chatIP = redirect.ip;
-                        response.chatPort = redirect.port;
-                        response.altIP = redirect.ip;
-
-                        //Session stuff.
-                        // TODO: Check if the user already has a login from this ip, if so kill that session (and log out the other user logged in at some point)
-                        // TODO: Check to see if there is already an existing session for this user, if so, use it
-                        // TODO: Actually store this in the DB
-                        response.session = rand(32);
-                        let today = new Date();
-
-                        Session.create({
-                            key: response.session,
-                            start_time: today,
-                            end_time: new Date(today.getTime() + (24 * 60 * 60 * 1000)),
-                            ip: user.address,
-                            user_id: userModel.id
-                        });
-
-                        response.clientVersionMajor = 1;
-                        response.clientVersionCurrent = 10;
-                        response.clientVersionMinor = 64;
-                        response.localization = 'US';
-                        //TODO: Actually get this from the DB
-                        response.firstSubscription = false;
-                        //TODO: Actually get this from the DB
-                        response.freeToPlay = false;
-
-                        let send = new BitStream();
-                        send.writeByte(RakMessages.ID_USER_PACKET_ENUM);
-                        send.writeShort(LURemoteConnectionType.client);
-                        send.writeLong(LUClientMessageType.LOGIN_RESPONSE);
-                        send.writeByte(0);
-                        response.serialize(send);
-                        client.send(send, Reliability.RELIABLE_ORDERED);
-                    });
-
-                    return;
-                } else {
-                    response.code = LoginCodes.badPassword;
-                }
-            }
-
-            response.clientVersionMajor = 1;
-            response.clientVersionCurrent = 10;
-            response.clientVersionMinor = 64;
-            response.localization = 'US';
-            //TODO: Actually get this from the DB
-            response.firstSubscription = false;
-            //TODO: Actually get this from the DB
-            response.freeToPlay = false;
-
-            let send = new BitStream();
-            send.writeByte(RakMessages.ID_USER_PACKET_ENUM);
-            send.writeShort(LURemoteConnectionType.client);
-            send.writeLong(LUClientMessageType.LOGIN_RESPONSE);
-            send.writeByte(0);
-            response.serialize(send);
-            client.send(send, Reliability.RELIABLE_ORDERED);
-        });
-    });
+        const send = new BitStream();
+        send.writeByte(RakMessages.ID_USER_PACKET_ENUM);
+        send.writeShort(LURemoteConnectionType.client);
+        send.writeLong(LUClientMessageType.LOGIN_RESPONSE);
+        send.writeByte(0);
+        response.serialize(send);
+        client.send(send, Reliability.RELIABLE_ORDERED);
+      });
+    }
+  );
 }
 
 module.exports = MSG_AUTH_LOGIN_REQUEST;

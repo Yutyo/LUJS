@@ -1,21 +1,21 @@
-const {Sequelize} = require('sequelize');
+const { Sequelize } = require('sequelize');
 const config = require('config');
 
 // Set up connection information
-let sequelize = new Sequelize('cdclient', null, null, {
-    dialect: config.get('cdclient.type'),
-    operatorsAliases: false,
-    storage: config.get('cdclient.connection'),
-    logging: false,
+const sequelize = new Sequelize('cdclient', null, null, {
+  dialect: config.get('cdclient.type'),
+  operatorsAliases: false,
+  storage: config.get('cdclient.connection'),
+  logging: false
 });
-
-let models = {};
 
 // Test connection
-sequelize.authenticate().then(function(err) {
-    if (err) throw 'Unable to connect to the database:' + err;
-    console.log("Connected to the CDClient database");
+sequelize.authenticate().then(function (err) {
+  if (err) throw new Error('Unable to connect to the database:' + err);
+  console.log('Connected to the CDClient database');
 });
+
+const models = {};
 
 // import models
 models.ComponentsRegistry = require('./CDClient/ComponentsRegistry')(sequelize);
