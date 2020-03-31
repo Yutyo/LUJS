@@ -10,7 +10,7 @@ const BitStream = require('node-raknet/BitStream');
 const { Reliability } = require('node-raknet/ReliabilityLayer.js');
 const { LoginInfo, LoginCodes } = require('../../LU/Messages/LoginInfo');
 const bcrypt = require('bcryptjs');
-const { Session, User } = require('../../DB/LUJS');
+const { Session, User, HardwareSurvey } = require('../../DB/LUJS');
 const { ServerManager } = require('../../ServerManager');
 const util = require('util');
 const bcryptHash = util.promisify(bcrypt.hash);
@@ -38,11 +38,11 @@ function MSG_AUTH_LOGIN_REQUEST (handler) {
       const password = packet.readWString(41);
       packet.readShort(); // language
       packet.readByte(); // unknown
-      packet.readWString(256); // process information
-      packet.readWString(128); // graphics information
-      packet.readLong(); // number of processors
-      packet.readShort(); // processor type
-      packet.readShort(); // processor level
+      const processInformation = packet.readWString(256); // process information
+      const graphicsInformation = packet.readWString(128); // graphics information
+      const numberOfProcessors = packet.readLong(); // number of processors
+      const processorType = packet.readShort(); // processor type
+      const processorLevel = packet.readShort(); // processor level
       packet.readLong(); // unknown 2
 
       if (!packet.allRead()) {
@@ -51,6 +51,14 @@ function MSG_AUTH_LOGIN_REQUEST (handler) {
         packet.readLong(); // os build
         packet.readLong(); // os platform
       }
+
+      HardwareSurvey.create({
+        process_information: processInformation,
+        graphics_information: graphicsInformation,
+        number_of_processors: numberOfProcessors,
+        processor_type: processorType,
+        processor_level: processorLevel
+      });
 
       User.findOne({
         where: { username: username }
