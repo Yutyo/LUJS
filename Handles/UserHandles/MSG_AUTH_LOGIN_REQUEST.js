@@ -74,7 +74,7 @@ function MSG_AUTH_LOGIN_REQUEST (handler) {
             .then(hash => {
               console.log(hash);
             })
-            .then(() => {
+            .catch(() => {
               console.error('Failed to generate password hash');
             });
 

@@ -42,6 +42,7 @@ function MSG_WORLD_CLIENT_VALIDATION (handler) {
                 { user_id: userDB.id },
                 { start_time: { [Op.lt]: new Date() } },
                 { end_time: { [Op.gt]: new Date() } },
+                { key: sessionInfo.key },
                 { ip: user.address }
               ]
             }
