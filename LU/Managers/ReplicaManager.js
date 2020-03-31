@@ -1,4 +1,5 @@
 const GenericManager = require('./GenericManager');
+const GameObject = require('../Replica/Object');
 
 /**
  * A manager for objects in game
@@ -51,13 +52,14 @@ class ReplicaManager extends GenericManager {
     this._count++;
     if (lwoobjid === undefined) {
       // TODO: Need to set up the LWOOBJID Manager to increment object ID's '.nextID()'?
+      console.log('Needs LWOOBJID');
     } else {
     }
 
     const replicaManager = this;
     const replicaManagerCount = replicaManager._count;
 
-    const obj = {
+    const obj = new GameObject(
       replicaManager,
       replicaManagerCount,
       lwoobjid,
@@ -67,7 +69,7 @@ class ReplicaManager extends GenericManager {
       scale,
       owner,
       data
-    };
+    );
 
     const manager = this;
 
