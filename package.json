@@ -35,7 +35,7 @@
     "xmlbuilder": "^13.0.2"
   },
   "author": "Raine Bannister",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/RaineBannister/lujs/issues"
   },
