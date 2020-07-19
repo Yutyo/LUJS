@@ -1,4 +1,4 @@
-const GenericManager = require('./GenericManager');
+const GenericManager = require('./GenericManager').default;
 
 class LWOOBJIDManager extends GenericManager {
   constructor (server) {

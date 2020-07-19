@@ -1,9 +1,9 @@
-const GenericManager = require('./GenericManager');
+const GenericManager = require('./GenericManager').default;
 const TransferToWorld = require('../Messages/TransferToWorld');
 const LUClientMessageType = require('../Message Types/LUClientMessageType');
 const LURemoteConnectionType = require('../Message Types/LURemoteConnectionType');
 const { Reliability } = require('node-raknet/ReliabilityLayer.js');
-const BitStream = require('node-raknet/BitStream');
+const BitStream = require('node-raknet/structures/BitStream');
 const RakMessages = require('node-raknet/RakMessages.js');
 const GameMessageFactory = require('../../LU/GameMessageFactory');
 const GameMessageKey = require('lugamemessages/GameMessages').GameMessageKey;

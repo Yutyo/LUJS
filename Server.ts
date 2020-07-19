@@ -1,13 +1,13 @@
+
+
 const fs = require('fs');
-const EventEmitter = require('events');
 const util = require('util');
 const config = require('config');
 
 const readFile = util.promisify(fs.readFile);
 
-const LUZ = require('./LU/Level/luz');
-const BitStream = require('node-raknet/BitStream');
-const Manager = require('./LU/Managers/Manager');
+const LUZ = require('./LU/Level/luz').default;
+const BitStream = require('node-raknet/structures/BitStream').default;
 const ReplicaManager = require('./LU/Managers/ReplicaManager');
 const LWOOBJIDManager = require('./LU/Managers/LWOOBJIDManager');
 const ChatManager = require('./LU/Managers/ChatManager');
@@ -25,62 +25,77 @@ const Unknown107Manager = require('./LU/Managers/ReplicaManagers/Unknown107Manag
 
 const { ZoneTable } = require('./DB/CDClient');
 
+import RakServer from 'node-raknet/RakServer';
+import * as events from 'events';
+import Manager from "./LU/Managers/Manager";
+
+export class RakServerExtended extends RakServer {
+  userMessageHandler: events.EventEmitter;
+  parent: Server;
+
+  constructor(ip : string, port : number, password : string) {
+    super(ip, port, password);
+
+    this.userMessageHandler = new events.EventEmitter();
+  }
+}
+
 /**
  * A server instance
  */
-class Server {
+export class Server {
+
+  #rakserver: RakServerExtended;
+  #ip: string;
+  #port: number;
+  #zoneID: number;
+  #manager: Manager;
+  #luz;
+
   /**
    *
-   * @param {RakServer} rakserver The rakserver instance to attach to this server
+   * @param {RakServerExtended} rakserver The rakserver instance to attach to this server
    * @param {String} ip
    * @param {Number} port
    * @param {Number} zoneID the zone ID of the zone you want to load
    */
-  constructor (rakserver, ip, port, zoneID) {
-    this._rakserver = rakserver;
+  constructor (rakserver : RakServerExtended, ip : string, port : number, zoneID : number) {
+    this.#rakserver = rakserver;
+    this.#ip = ip;
+    this.#port = port;
+    this.#zoneID = zoneID;
 
-    this._ip = ip;
-    this._port = port;
-
-    if (this._rakserver.userMessageHandler === undefined) {
-      this._rakserver.userMessageHandler = new EventEmitter();
-    }
-
-    this._zoneID = zoneID;
-    const server = this;
-    this._rakserver.getServer = function () {
-      return server;
-    };
+    this.#rakserver.parent = this;
 
     // if(this.zoneID > 0) {
     //    this.loadLUZ(this.zoneID);
     // }
 
     // Attach managers
-    this._manager = new Manager();
-    this._manager.attachManager('replica', new ReplicaManager(this));
-    this._manager.attachManager('lwoobjid', new LWOOBJIDManager(this));
-    this._manager.attachManager('chat', new ChatManager(this));
+    this.#manager = new Manager();
+    this.#manager.attachManager('replica', new ReplicaManager(this));
+    this.#manager.attachManager('lwoobjid', new LWOOBJIDManager(this));
+    this.#manager.attachManager('chat', new ChatManager(this));
 
     // Replica Components
-    this._manager.attachManager('character', new CharacterManager(this));
-    this._manager.attachManager(
+    this.#manager.attachManager('character', new CharacterManager(this));
+    this.#manager.attachManager(
       'controllable-physics',
       new ControllablePhysicsManager(this)
     );
-    this._manager.attachManager('destructible', new DestructibleManager(this));
-    this._manager.attachManager('inventory', new InventoryManager(this));
-    this._manager.attachManager('render', new RenderManager(this));
-    this._manager.attachManager(
+    this.#manager.attachManager('destructible', new DestructibleManager(this));
+    this.#manager.attachManager('inventory', new InventoryManager(this));
+    this.#manager.attachManager('render', new RenderManager(this));
+    this.#manager.attachManager(
       'rocket-landing',
       new RocketLandingManager(this)
     );
-    this._manager.attachManager('skill', new SkillManager(this));
-    this._manager.attachManager(
+    this.#manager.attachManager('skill', new SkillManager(this));
+    this.#manager.attachManager(
       'sound-ambient-2d',
       new SoundAmbient2DManager(this)
     );
-    this._manager.attachManager('unknown-127', new Unknown107Manager(this));
+    this.#manager.attachManager('unknown-127', new Unknown107Manager(this));
   }
 
   /**
@@ -97,42 +112,42 @@ class Server {
 
   /**
    * Returns the rakserver instance associated to this server
-   * @return {RakServer}
+   * @return {RakServerExtended}
    */
-  get rakServer () {
-    return this._rakserver;
+  get rakServer () : RakServerExtended{
+    return this.#rakserver;
   }
 
   /**
    * Returns the IP of this server to redirect to
-   * @returns {String}
+   * @returns {string}
    */
-  get ip () {
-    return this._ip;
+  get ip () : string {
+    return this.#ip;
   }
 
   /**
    * Returns this port of this server to redirect to
-   * @returns {Number}
+   * @returns {number}
    */
-  get port () {
-    return this._port;
+  get port () : number {
+    return this.#port;
   }
 
   /**
    * Returns the event bus for this server
-   * @return {EventEmitter}
+   * @return {events.EventEmitter}
    */
-  get eventBus () {
-    return this._rakserver.userMessageHandler;
+  get eventBus () : events.EventEmitter {
+    return this.#rakserver.userMessageHandler;
   }
 
   /**
    * Returns the zone ID associated with this server
-   * @return {Number}
+   * @return {number}
    */
   get zoneID () {
-    return this._zoneID;
+    return this.#zoneID;
   }
 
   /**
@@ -140,7 +155,7 @@ class Server {
    * @return {Manager}
    */
   get manager () {
-    return this._manager;
+    return this.#manager;
   }
 
   /**
@@ -148,7 +163,7 @@ class Server {
    * @return {LUZ}
    */
   get luz () {
-    return this._luz;
+    return this.#luz;
   }
 
   /**
@@ -163,7 +178,7 @@ class Server {
         return readFile(config.get('mapsFolder') + zone.zoneName);
       })
       .then(file => {
-        server._luz = new LUZ(new BitStream(file));
+        //server.#luz = new LUZ(new BitStream(file));
       });
   }
 
@@ -173,10 +188,8 @@ class Server {
    * @param {Number} reliability
    */
   broadcast (stream, reliability) {
-    this._rakserver.connections.forEach(client => {
+    this.#rakserver.connections.forEach(client => {
       client.send(stream, reliability);
     });
   }
 }
-
-module.exports = Server;

@@ -3,15 +3,11 @@ const util = require('util');
 const fs = require('fs');
 const path = require('path');
 const EventEmitter = require('events');
-const RakServer = require('node-raknet/RakServer.js');
-
 const readdir = util.promisify(fs.readdir);
 
-/**
- *
- * @type {Server[]}
- */
-const servers = [];
+import {Server, RakServerExtended} from './Server';
+
+export const servers : Array<Server> = [];
 
 const startPort = 3000;
 // const poolSize = 5; TODO: use this
@@ -19,7 +15,7 @@ let currentPort = startPort;
 const ip = config.globalIP;
 const password = '3.25 ND';
 
-class ServerManager {
+export class ServerManager {
   /**
    *
    * @param {Server} server
@@ -49,7 +45,7 @@ class ServerManager {
           return handles;
         })
         .then(handles => {
-          const rakServer = new RakServer('0.0.0.0', port, password);
+          const rakServer = new RakServerExtended('0.0.0.0', port, password);
 
           rakServer.userMessageHandler = new EventEmitter();
 
@@ -59,8 +55,7 @@ class ServerManager {
             });
           });
 
-          const ServerClass = require('./Server');
-          const server = new ServerClass(rakServer, ip, port, zoneID);
+          const server = new Server(rakServer, ip, port, zoneID);
           ServerManager.add(server);
 
           if (zoneID > 0) {
@@ -113,5 +108,3 @@ class ServerManager {
     });
   }
 }
-
-module.exports = { servers, ServerManager };

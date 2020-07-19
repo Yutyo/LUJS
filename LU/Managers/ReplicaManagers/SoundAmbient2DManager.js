@@ -1,4 +1,4 @@
-const GenericManager = require('../GenericManager');
+const GenericManager = require('../GenericManager').default;
 const Components = require('../../Replica/Components');
 const SerializationOrder = require('../../Replica/SerializationOrder');
 class SoundAmbient2DManager extends GenericManager {

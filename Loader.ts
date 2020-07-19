@@ -11,7 +11,7 @@ const PluginLoader = require('./PluginLoader');
 
 const config = require('config');
 
-class Loader {
+export default class Loader {
   static setup () {
     const loader = this;
 
@@ -42,5 +42,3 @@ class Loader {
     });
   }
 }
-
-module.exports = Loader;

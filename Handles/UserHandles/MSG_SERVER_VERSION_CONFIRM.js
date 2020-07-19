@@ -6,7 +6,7 @@ const RakMessages = require('node-raknet/RakMessages.js');
 const LURemoteConnectionType = require('../../LU/Message Types/LURemoteConnectionType');
 const LUGeneralMessageType = require('../../LU/Message Types/LUGeneralMessageType');
 const VersionConfirm = require('../../LU/Messages/VersionConfirm');
-const BitStream = require('node-raknet/BitStream');
+const BitStream = require('node-raknet/structures/BitStream');
 const { Reliability } = require('node-raknet/ReliabilityLayer.js');
 
 function MSG_SERVER_VERSION_CONFIRM (handler) {

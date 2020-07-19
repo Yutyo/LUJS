@@ -1,7 +1,7 @@
 // TODO: Add something that automatically updates files from the repo
 
 // Run the LU server...
-const Loader = require('./Loader');
+import Loader from './Loader';
 Loader.setup();
 
 // TODO: At some point I want an API server running...

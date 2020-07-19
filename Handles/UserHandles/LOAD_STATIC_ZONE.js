@@ -6,7 +6,7 @@ const RakMessages = require('node-raknet/RakMessages.js');
 const LURemoteConnectionType = require('../../LU/Message Types/LURemoteConnectionType');
 const LUServerMessageType = require('../../LU/Message Types/LUServerMessageType');
 const LUClientMessageType = require('../../LU/Message Types/LUClientMessageType');
-const BitStream = require('node-raknet/BitStream');
+const BitStream = require('node-raknet/structures/BitStream');
 const { Reliability } = require('node-raknet/ReliabilityLayer.js');
 const LoadStaticZone = require('../../LU/Messages/LoadStaticZone');
 
