@@ -30,6 +30,7 @@ import Manager from '../LU/Managers/Manager';
 export class RakServerExtended extends RakServer {
   userMessageHandler: events.EventEmitter;
   parent: Server;
+  timeout;
 
   constructor(ip: string, port: number, password: string) {
     super(ip, port, password);

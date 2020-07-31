@@ -15,7 +15,7 @@ export default function ID_DISCONNECTION_NOTIFICATION(
     user
   ) {
     console.log(
-      `Client ${user.address} has disconnected from ${server.getServer().ip}:${
+      `Client ${user.address} has disconnected from ${server.parent.ip}:${
         server.port
       }`
     );
@@ -36,7 +36,7 @@ export default function ID_DISCONNECTION_NOTIFICATION(
       server.timeout = setTimeout(() => {
         console.log(`Closing server ${server.port}`);
 
-        ServerManager.remove(server.getServer());
+        ServerManager.remove(server.parent);
       }, config.timeout);
     }
   });

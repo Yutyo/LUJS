@@ -11,7 +11,7 @@ export default function ID_NEW_INCOMING_CONNECTION(server: RakServerExtended) {
     user
   ) {
     console.log(
-      `Got new connection from ${user.address} for ${server.getServer().ip}:${
+      `Got new connection from ${user.address} for ${server.parent.ip}:${
         server.port
       }`
     );
