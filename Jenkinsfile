@@ -6,7 +6,7 @@ pipeline {
   stages {
     stage('Download Dependencies') {
       steps {
-        sh 'npm install'
+        sh 'npm update'
       }
     }
     stage('Format and Lint Code') {
