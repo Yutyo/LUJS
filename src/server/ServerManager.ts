@@ -83,7 +83,7 @@ export class ServerManager {
   static remove(server: Server): void {
     let index = -1;
     servers.forEach((server_, i) => {
-      if (server_.rakServer.port === server.rakServer.port) {
+      if (server_.rakServer.port() === server.rakServer.port()) {
         index = i;
       }
     });

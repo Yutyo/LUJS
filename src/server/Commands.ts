@@ -81,7 +81,7 @@ export default class Commands {
       case 'list-servers':
         servers.forEach((server) => {
           console.log(
-            `Server: ${server.rakServer.ip}:${server.rakServer.port} Zone: ${server.zoneID}`
+            `Server: ${server.rakServer.ip()}:${server.rakServer.port()} Zone: ${server.zoneID}`
           );
         });
         break;

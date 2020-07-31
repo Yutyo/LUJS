@@ -190,7 +190,7 @@ export class Server {
    * @param {Number} reliability
    */
   broadcast(stream, reliability) {
-    this.#rakserver.connections.forEach((client) => {
+    this.#rakserver.connections().forEach((client) => {
       client.send(stream, reliability);
     });
   }
