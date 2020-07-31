@@ -1,14 +1,15 @@
 {
   "name": "lujs",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A simple LEGO Universe server written in Node",
-  "main": "index.ts",
-  "bin": "index.js",
+  "main": "src/server/index.ts",
+  "bin": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "format": "prettier-standard --format --lint",
+    "format": "prettier --config .prettierrc \"src/**/*.ts\" --write && npm run lint",
     "build": "tsc",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "lint": "eslint . --ext .ts"
   },
   "lint-staged": {
     "linters": {
@@ -48,15 +49,21 @@
     "assets": "res/*"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^3.7.0",
+    "@typescript-eslint/parser": "^3.7.0",
     "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.11.0",
     "eslint-config-standard": "^14.1.1",
+    "eslint-config-standard-with-typescript": "^18.0.2",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "husky": "^4.2.5",
     "lint-staged": "^10.2.11",
     "pkg": "^4.4.9",
+    "prettier": "^2.0.5",
     "prettier-standard": "^16.4.1"
   }
 }
