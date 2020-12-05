@@ -1,5 +1,22 @@
 {
   "globals": {
     "BigInt": true
+  },
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint",
+    "prettier"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
+  ],
+  "rules": {
+    "no-console": 1,       // Means warning
+    "consistent-this": [2, "self"],
+    "prettier/prettier": 2 // Means error
   }
 }
